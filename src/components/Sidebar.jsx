@@ -4,10 +4,12 @@ import {
     Users,
     Wallet,
     FileText,
-    LogOut
+    LogOut,
+    Store
 } from "lucide-react";
 
 function Sidebar() {
+
     const navigate = useNavigate();
 
     function handleLogout() {
@@ -23,29 +25,56 @@ function Sidebar() {
         localStorage.removeItem("role");
 
         navigate("/login");
-
     }
 
+    const navStyle = ({ isActive }) =>
+        `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300
+        ${isActive
+            ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+            : "text-slate-400 hover:bg-slate-800 hover:text-white"
+        }`;
+
     return (
-        <aside className="w-64 min-h-screen bg-slate-900 text-white flex flex-col">
+        <aside className="w-72 min-h-screen bg-[#020817] border-r border-slate-800 flex flex-col">
 
             {/* Logo */}
-            <div className="p-6 border-b border-slate-700">
-                <h1 className="text-xl font-bold text-blue-400">
-                    Debt Manager
-                </h1>
 
-                <p className="text-sm text-slate-400">
-                    Customer Debt System
-                </p>
+            <div className="p-8 border-b border-slate-800">
+
+                <div className="flex items-center gap-4">
+
+                    <div className="w-12 h-12 rounded-xl bg-blue-600/20 border border-blue-600 flex items-center justify-center">
+
+                        <Store
+                            size={24}
+                            className="text-blue-500"
+                        />
+
+                    </div>
+
+                    <div>
+
+                        <h1 className="text-white font-bold text-xl">
+                            CLEOFER STORE
+                        </h1>
+
+                        <p className="text-slate-400 text-sm">
+                            Debt Management
+                        </p>
+
+                    </div>
+
+                </div>
+
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-2">
+
+            <nav className="flex-1 px-5 py-6 space-y-3">
 
                 <NavLink
                     to="/dashboard"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800"
+                    className={navStyle}
                 >
                     <LayoutDashboard size={20} />
                     Dashboard
@@ -53,7 +82,7 @@ function Sidebar() {
 
                 <NavLink
                     to="/customers"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800"
+                    className={navStyle}
                 >
                     <Users size={20} />
                     Customers
@@ -61,7 +90,7 @@ function Sidebar() {
 
                 <NavLink
                     to="/debts"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800"
+                    className={navStyle}
                 >
                     <Wallet size={20} />
                     Debts
@@ -69,7 +98,7 @@ function Sidebar() {
 
                 <NavLink
                     to="/reports"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800"
+                    className={navStyle}
                 >
                     <FileText size={20} />
                     Reports
@@ -77,12 +106,13 @@ function Sidebar() {
 
             </nav>
 
-            {/* Logout */}
-            <div className="p-4 border-t border-slate-700">
+            {/* Bottom */}
+
+            <div className="p-5 border-t border-slate-800">
 
                 <button
                     onClick={handleLogout}
-                    className="flex items-center gap-3 w-full p-3 rounded-xl text-slate-300 bg-transparent hover:bg-red-600 hover:text-white transition-all duration-300"
+                    className="flex items-center gap-3 w-full rounded-xl px-4 py-3 text-slate-400 hover:bg-red-600 hover:text-white transition-all duration-300"
                 >
                     <LogOut size={20} />
                     Logout
