@@ -1,20 +1,28 @@
 ﻿import { motion } from "framer-motion";
-import { Store, User, Lock, Eye, EyeOff } from "lucide-react";
+import {
+    Store,
+    User,
+    Lock,
+    Eye,
+    EyeOff
+} from "lucide-react";
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { Toaster, toast } from "react-hot-toast";
 
-
 function Login() {
+
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+
     const navigate = useNavigate();
 
     const handleLogin = async () => {
-    
+
         if (!username || !password) {
             toast.error("Please enter your username and password.");
             return;
@@ -26,10 +34,8 @@ function Login() {
 
             const response = await api.post("/Auth/login", {
                 username,
-                password
+                password,
             });
-
-            console.log(response.data);
 
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("role", response.data.role);
@@ -37,14 +43,9 @@ function Login() {
 
             toast.success("Login successful!");
 
-            console.log("Saved Token:", localStorage.getItem("token"));
-
             navigate("/dashboard");
 
-        }
-        catch (error) {
-
-            console.log(error);
+        } catch (error) {
 
             if (error.response) {
                 toast.error(error.response?.data || "Invalid username or password.");
@@ -52,189 +53,256 @@ function Login() {
                 toast.error("Unable to connect to the server.");
             }
 
-        }
-        finally {
+        } finally {
 
             setLoading(false);
 
         }
+
     };
 
     return (
 
         <>
+
             <Toaster
                 position="top-right"
                 toastOptions={{
                     style: {
-                        background: "#0F172A",
-                        color: "#fff",
-                        border: "1px solid #1E3A8A",
-                    },
-                    success: {
-                        iconTheme: {
-                            primary: "#2563EB",
-                            secondary: "#fff",
-                        },
+                        background: "#ffffff",
+                        color: "#1F2937",
+                        border: "1px solid #E5E7EB",
                     },
                 }}
             />
-        <div className="relative min-h-screen overflow-hidden bg-[#020817] flex items-center justify-center">
 
+            <div className="h-screen bg-[#F8FAFC] flex overflow-hidden">
 
-            {/* Background Glow */}
+                {/* LEFT SIDE */}
 
-            <div className="absolute inset-0 overflow-hidden">
+                <div className="hidden lg:flex w-1/2 bg-white px-16 py-12 flex-col justify-between border-r border-gray-100">
 
-                <motion.div
-                    animate={{
-                        x: [0, 30, 0],
-                        y: [0, 20, 0],
-                    }}
-                    transition={{
-                        duration: 12,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                    }}
-                    className="absolute -top-40 -left-40 w-96 h-96 bg-blue-700/20 blur-[150px] rounded-full"
-                />
+                    {/* Logo */}
 
-                <motion.div
-                    animate={{
-                        x: [0, -30, 0],
-                        y: [0, -20, 0],
-                    }}
-                    transition={{
-                        duration: 15,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                    }}
-                    className="absolute bottom-0 right-0 w-[450px] h-[450px] bg-blue-900/20 blur-[170px] rounded-full"
-                />
+                    <div className="flex items-center gap-4">
 
-                <div className="absolute top-32 right-60 grid grid-cols-4 gap-3 opacity-20">
-                    {Array.from({ length: 16 }).map((_, i) => (
-                        <span
-                            key={i}
-                            className="w-1.5 h-1.5 rounded-full bg-blue-500"
-                        />
-                    ))}
-                </div>
+                        <div className="w-16 h-16 rounded-2xl bg-[#E0E7FF] flex items-center justify-center">
 
-            </div>
-            {/* Background Decoration */}
-            <div className="absolute w-96 h-96 bg-blue-600/20 rounded-full blur-3xl -top-20 -left-20"></div>
+                            <Store
+                                size={32}
+                                className="text-[#1E3A8A]"
+                            />
 
-            <div className="absolute w-80 h-80 bg-blue-800/20 rounded-full blur-3xl bottom-0 right-0"></div>
+                        </div>
 
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                    className="relative z-10 w-full max-w-[460px] mx-4 rounded-3xl border border-slate-700 bg-[#0F172A]/90 backdrop-blur-xl shadow-[0_0_60px_rgba(37,99,235,0.15)] p-8"
-            >
+                        <div>
 
-                {/* Logo */}
+                            <h1 className="text-3xl font-bold text-gray-900">
 
-                <div className="flex justify-center">
+                                CLEOFER STORE
 
-                    <div className="w-20 h-20 rounded-full bg-blue-600/10 flex items-center justify-center border border-blue-600">
+                            </h1>
 
-                        <Store className="text-blue-500" size={38} />
+                            <p className="text-gray-500 mt-1">
+
+                                Customer Debt Management System
+
+                            </p>
+
+                        </div>
 
                     </div>
 
-                </div>
+                    {/* Hero Text */}
 
-                {/* Title */}
+                    <div>
 
-                <h1 className="text-center text-4xl font-bold mt-6">
+                        <h2 className="text-5xl font-bold leading-tight">
 
-                    <span className="text-blue-500">
-                        CLEOFER
-                    </span>
+                            <span className="text-[#1E3A8A]">
 
-                    <span className="text-white">
-                        {" "}STORE
-                    </span>
+                                Manage Debts.
 
-                </h1>
+                            </span>
 
-                <p className="text-gray-400 text-center uppercase tracking-[5px] text-sm mt-2">
-                    Owner & Staff Access
-                </p>
+                            <br />
 
-                <div className="w-24 h-[2px] bg-blue-600 mx-auto my-8"></div>
+                            <span className="text-gray-900">
 
-                {/* Username */}
+                                Grow Your Business.
 
-                <label className="text-gray-300 text-sm">
-                    Username
-                </label>
+                            </span>
 
-                <div className="mt-2 mb-5 relative">
+                        </h2>
 
-                    <User
-                        size={20}
-                        className="absolute left-4 top-4 text-gray-500"
-                    />
+                        <p className="mt-8 text-lg text-gray-500 leading-9 max-w-lg">
 
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter username"
-                            className="w-full bg-[#111827] border border-gray-700 rounded-xl pl-12 pr-12 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 focus:shadow-[0_0_15px_rgba(37,99,235,.3)] duration-300 outline-none transition"
-                        />
+                            Track customer debts, manage payments, and monitor
+                            due dates in one secure and organized platform.
+
+                        </p>
+
+                        <div className="w-20 h-1 bg-gradient-to-r from-[#1E3A8A] to-[#2563EB]
+hover:from-[#1D4ED8]
+hover:to-[#3B82F6] rounded-full mt-10"></div>
+
+                    </div>
+
+                   
 
                 </div>
 
-                {/* Password */}
+                {/* RIGHT SIDE */}
 
-                <label className="text-gray-300 text-sm">
-                    Password
-                </label>
+                <div className="flex-1 flex items-center justify-center p-10">
 
-                <div className="mt-2 relative">
-
-                    <Lock
-                        size={20}
-                        className="absolute left-4 top-4 text-gray-500"
-                    />
-
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter password"
-                            className="w-full bg-[#111827] border border-gray-700 rounded-xl pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:border-blue-500"
-                    />
-
-                    <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: .5 }}
+                        className="w-full max-w-[560px] bg-white rounded-[30px] shadow-2xl border border-gray-100 px-12 py-10"
                     >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                </div>
 
-                {/* Button */}
+                        {/* Logo */}
 
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleLogin}
-                    disabled={loading}
-                    className={`w-full mt-8 py-3 rounded-xl font-semibold text-lg transition ${loading
-                            ? "bg-gray-700 cursor-not-allowed"
-                            : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 shadow-lg shadow-blue-600/20"
-                        }`}
-                >
-                        <div className="flex items-center justify-center gap-2">
-                            <span>{loading ? "Signing In..." : "Sign In"}</span>
+                        <div className="flex justify-center">
+
+                            <div className="w-20 h-20 rounded-full bg-[#DBEAFE] flex items-center justify-center">
+
+                                <Store
+                                    size={36}
+                                    className="text-[#1D4ED8]"
+                                />
+
+                            </div>
+
+                        </div>
+
+                        {/* Welcome */}
+
+                        <h2 className="text-4xl font-bold text-center text-gray-900 mt-6">
+
+                            Welcome Back!
+
+                        </h2>
+
+                        <p className="text-center text-gray-500 mt-3 mb-8">
+
+                            Sign in to continue to your account
+
+                        </p>
+
+                        {/* Username */}
+
+                        <label className="text-gray-700 font-medium">
+
+                            Username
+
+                        </label>
+
+                        <div className="relative mt-3 mb-6">
+
+                            <User
+                                size={20}
+                                className="absolute left-4 top-4 text-gray-400"
+                            />
+
+                            <input
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="Enter your username"
+                                className="w-full h-12 rounded-xl border border-gray-300 bg-white pl-12 pr-4 text-gray-800 placeholder-gray-400 outline-none transition focus:border-[#1E3A8A]
+focus:ring-2
+focus:ring-[#DBEAFE]"
+                            />
+
+                        </div>
+
+                        {/* Password */}
+
+                        <label className="text-gray-700 font-medium">
+
+                            Password
+
+                        </label>
+
+                        <div className="relative mt-3">
+
+                            <Lock
+                                size={20}
+                                className="absolute left-4 top-4 text-gray-400"
+                            />
+
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter your password"
+                                className="w-full h-12 rounded-xl border border-gray-300 bg-white pl-12 pr-12 text-gray-800 placeholder-gray-400 outline-none transition focus:border-[#1E3A8A]
+focus:ring-2
+focus:ring-[#DBEAFE]"
+                            />
+
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1E3A8A]"
+                            >
+
+                                {showPassword ? (
+                                    <EyeOff size={20} />
+                                ) : (
+                                    <Eye size={20} />
+                                )}
+
+                            </button>
+
+                        </div>
+                        {/* Remember Me & Forgot Password */}
+
+                        <div className="flex justify-start mt-6">
+
+                            <label className="flex items-center gap-3 cursor-pointer">
+
+                                <input
+                                    type="checkbox"
+                                    className="w-4 h-4 accent-[#1E3A8A]"
+                                />
+
+                                <span className="text-gray-600 text-sm">
+                                    Remember me
+                                </span>
+
+                            </label>
+
+                            <button
+                                type="button"
+                                className="text-[#1E3A8A] hover:text-[#2563EB] text-sm font-medium"
+                            >
+                                Forgot password?
+                            </button>
+
+                        </div>
+
+                        {/* Login Button */}
+
+                        <motion.button
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={handleLogin}
+                            disabled={loading}
+                            className={`w-full h-14 mt-8 rounded-xl flex items-center justify-center gap-3 text-lg font-semibold transition-all duration-300 ${loading
+                                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                : "bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white shadow-lg shadow-blue-300/30"
+                                }`}
+                        >
+                            <span>
+                                {loading ? "Signing In..." : "Sign In"}
+                            </span>
 
                             {!loading && (
+
                                 <motion.span
                                     animate={{ x: [0, 4, 0] }}
                                     transition={{
@@ -244,29 +312,31 @@ function Login() {
                                 >
                                     →
                                 </motion.span>
+
                             )}
-                        </div>
-                </motion.button>
 
-                <div className="flex items-center gap-4 mt-8">
+                        </motion.button>
 
-                    <div className="flex-1 border-t border-gray-700"></div>
+                        {/* Footer */}
 
-                    <span className="text-gray-500 text-sm">
-                        © 2026 Cleofer Store
-                    </span>
+                        <p className="text-center text-gray-400 text-sm mt-8">
 
-                    <div className="flex-1 border-t border-gray-700"></div>
+                            © 2026 Cleofer Store. All rights reserved.
+
+                        </p>
+
+                    </motion.div>
 
                 </div>
-
-                </motion.div>
 
             </div>
 
         </>
 
     );
+
 }
 
 export default Login;
+
+
