@@ -5,7 +5,7 @@ import {
     UserRound,
     HandCoins,
     BadgeCheck,
-    TriangleAlert,
+    AlertTriangle,
     Hourglass,
     ReceiptText
 } from "lucide-react";
@@ -156,7 +156,7 @@ function Dashboard() {
                 <DashboardCard
                     title="Overdue Debts"
                     value={dashboard.overdueDebts}
-                    icon={TriangleAlert}
+                    icon={AlertTriangle}
                     bgColor="bg-purple-100"
                     iconColor="text-purple-600"
                 />
