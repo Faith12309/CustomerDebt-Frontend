@@ -76,11 +76,42 @@ function Login() {
                 }}
             />
 
-            <div className="h-screen bg-[#F8FAFC] flex overflow-hidden">
+                <div className="relative h-screen bg-gradient-to-br from-[#F8FAFC] to-[#EEF4FF] flex overflow-hidden">
 
+                    {/* Background Glow */}
+
+                    <div className="absolute top-20 left-20 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl"></div>
+
+                    <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl"></div>
+
+                <motion.div
+                    animate={{
+                        x: [0, 20, 0],
+                        y: [0, -20, 0],
+                    }}
+                    transition={{
+                        duration: 10,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                    }}
+                    className="absolute top-20 left-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"
+                />
+
+                <motion.div
+                    animate={{
+                        x: [0, -20, 0],
+                        y: [0, 20, 0],
+                    }}
+                    transition={{
+                        duration: 12,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                    }}
+                    className="absolute bottom-20 right-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl"
+                />
                 {/* LEFT SIDE */}
 
-                <div className="hidden lg:flex w-1/2 bg-white px-16 py-12 flex-col justify-between border-r border-gray-100">
+                <div className="hidden lg:flex w-1/2 bg-white px-16 py-3 flex-col justify-between border-r border-gray-100">
 
                     {/* Logo */}
 
@@ -117,11 +148,11 @@ function Login() {
 
                     <div>
 
-                        <h2 className="text-5xl font-bold leading-tight">
+                        <h2 className="text-4xl font-bold leading-tight">
 
                             <span className="text-[#1E3A8A]">
 
-                                Manage Debts.
+                                Simplify Debt Tracking.
 
                             </span>
 
@@ -129,20 +160,21 @@ function Login() {
 
                             <span className="text-gray-900">
 
-                                Grow Your Business.
+                                Improve Cash Flow.
 
                             </span>
 
                         </h2>
 
-                        <p className="mt-8 text-lg text-gray-500 leading-9 max-w-lg">
+                        <p className="mt-8 text-base text-gray-500 leading-9 max-w-lg">
 
                             Track customer debts, manage payments, and monitor
                             due dates in one secure and organized platform.
 
                         </p>
 
-                        <div className="w-20 h-1 bg-gradient-to-r from-[#1E3A8A] to-[#2563EB]
+                        <div className="w-20 h-1 bg-gradient-to-r from-[#1D4ED8]
+to-[#3B82F6]
 hover:from-[#1D4ED8]
 hover:to-[#3B82F6] rounded-full mt-10"></div>
 
@@ -160,17 +192,17 @@ hover:to-[#3B82F6] rounded-full mt-10"></div>
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: .5 }}
-                        className="w-full max-w-[560px] bg-white rounded-[30px] shadow-2xl border border-gray-100 px-12 py-10"
+                        className="w-full max-w-[560px] bg-white rounded-[30px] shadow-[0_20px_60px_rgba(30,58,138,.12)] border border-gray-100 px-12 py-10"
                     >
 
                         {/* Logo */}
 
                         <div className="flex justify-center">
 
-                            <div className="w-20 h-20 rounded-full bg-[#DBEAFE] flex items-center justify-center">
+                            <div className="w-16 h-16 rounded-full bg-[#DBEAFE] flex items-center justify-center">
 
                                 <Store
-                                    size={36}
+                                    size={30}
                                     className="text-[#1D4ED8]"
                                 />
 
@@ -180,7 +212,7 @@ hover:to-[#3B82F6] rounded-full mt-10"></div>
 
                         {/* Welcome */}
 
-                        <h2 className="text-4xl font-bold text-center text-gray-900 mt-6">
+                        <h2 className="text-3xl font-bold font-bold text-center text-gray-900 mt-6">
 
                             Welcome Back!
 
@@ -212,7 +244,8 @@ hover:to-[#3B82F6] rounded-full mt-10"></div>
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 placeholder="Enter your username"
-                                className="w-full h-12 rounded-xl border border-gray-300 bg-white pl-12 pr-4 text-gray-800 placeholder-gray-400 outline-none transition focus:border-[#1E3A8A]
+                                className="w-full h-12 rounded-xl border border-gray-300 bg-white/90
+backdrop-blur-xl pl-12 pr-4 text-gray-800 placeholder-gray-400 outline-none transition focus:border-[#1E3A8A]
 focus:ring-2
 focus:ring-[#DBEAFE]"
                             />
@@ -239,7 +272,7 @@ focus:ring-[#DBEAFE]"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="Enter your password"
-                                className="w-full h-12 rounded-xl border border-gray-300 bg-white pl-12 pr-12 text-gray-800 placeholder-gray-400 outline-none transition focus:border-[#1E3A8A]
+                                className="w-full h-12 rounded-xl border border-white/50 bg-white pl-12 pr-12 text-gray-800 placeholder-gray-400 outline-none transition focus:border-[#1E3A8A]
 focus:ring-2
 focus:ring-[#DBEAFE]"
                             />
@@ -270,7 +303,7 @@ focus:ring-[#DBEAFE]"
                                     className="w-4 h-4 accent-[#1E3A8A]"
                                 />
 
-                                <span className="text-gray-600 text-sm">
+                                <span className="text-gray-60 text-sm">
                                     Remember me
                                 </span>
 

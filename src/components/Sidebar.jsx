@@ -4,6 +4,7 @@ import {
     Users,
     Wallet,
     FileText,
+    Package,
     LogOut,
     Store
 } from "lucide-react";
@@ -86,6 +87,14 @@ function Sidebar() {
                 >
                     <Users size={20} />
                     Customers
+                </NavLink>
+
+                <NavLink
+                    to="/products"
+                    className={navStyle}
+                >
+                    <Package size={20} />
+                    Products
                 </NavLink>
 
                 <NavLink

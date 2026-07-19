@@ -5,6 +5,8 @@ import Dashboard from "../pages/Dashboard";
 import Customers from "../pages/Customers";
 import Debts from "../pages/Debts";
 import Reports from "../pages/Reports";
+import Products from "../pages/Products";
+
 
 import MainLayout from "../layouts/MainLayout";
 
@@ -22,6 +24,8 @@ function AppRoutes() {
                 <Route path="/dashboard" element={<Dashboard />} />
 
                 <Route path="/customers" element={<Customers />} />
+
+                <Route path="/products" element={<Products />} />
 
                 <Route path="/debts" element={<Debts />} />
 
