@@ -16,7 +16,7 @@ function DetailRow({ icon: Icon, label, value }) {
             <div className="min-w-0">
                 <p className="text-xs text-gray-400">{label}</p>
                 <p className="text-sm font-medium text-gray-900 mt-0.5 break-words">
-                    {value || "—"}
+                    {value || "\u2014"}
                 </p>
             </div>
         </div>
