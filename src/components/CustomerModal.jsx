@@ -284,7 +284,7 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                     </div>
                 </form>
 
-                {/* Action Buttons — pinned to the bottom so they're always reachable */}
+                {/* Action Buttons - pinned to the bottom so they're always reachable */}
                 <div className="flex items-center justify-end gap-3 px-8 py-5 border-t border-gray-100 bg-gray-50/50 shrink-0">
                     <button
                         type="button"
