@@ -23,3 +23,16 @@ export const getDueAlerts = async () => {
     return response.data;
 
 };
+
+export const getSalesSummary = async () => {
+
+    const response = await api.get("/Dashboard/sales-summary");
+
+    return response.data;
+
+};
+
+export const getRecentSales = async () => {
+    const response = await api.get("/Dashboard/recent-sales");
+    return response.data;
+};

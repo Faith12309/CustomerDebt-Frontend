@@ -1,20 +1,28 @@
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Wallet, AlertTriangle, CheckCircle2, Receipt } from "lucide-react";
 import PaymentModal from "../components/PaymentModal";
 import { payDebt } from "../services/debtService";
 import DebtTable from "../components/DebtTable";
-import DebtModal from "../components/DebtModal";
+import SaleModal from "../components/SaleModal";
 import SearchBar from "../components/SearchBar";
+import { getCustomerCreditSales } from "../services/saleService";
+import BorrowedProductsModal from "../components/BorrowedProductsModal";
+import DashboardCard from "../components/DashboardCard";
 
 import {
     getDebts,
-    addDebt,
-    updateDebt,
     searchDebt,
     deleteDebt
 } from "../services/debtService";
 
 import { getCustomers } from "../services/customerService";
+
+const peso = (value) =>
+    Number(value ?? 0).toLocaleString("en-PH", {
+        style: "currency",
+        currency: "PHP",
+        maximumFractionDigits: 0,
+    });
 
 function Debts() {
 
@@ -27,6 +35,9 @@ function Debts() {
 
     const [isPaymentOpen, setIsPaymentOpen] = useState(false);
     const [selectedPaymentDebt, setSelectedPaymentDebt] = useState(null);
+
+    const [isViewOpen, setIsViewOpen] = useState(false);
+    const [customerSales, setCustomerSales] = useState([]);
 
     async function loadDebts() {
 
@@ -99,36 +110,6 @@ function Debts() {
 
     }, []);
 
-    async function handleSave(debt) {
-
-        try {
-
-            if (selectedDebt) {
-
-                await updateDebt(selectedDebt.id, debt);
-
-            }
-            else {
-
-                await addDebt(debt);
-
-            }
-
-            setIsModalOpen(false);
-            setSelectedDebt(null);
-
-            loadDebts();
-
-        }
-        catch (error) {
-
-            console.error(error);
-
-            alert("Unable to save debt.");
-
-        }
-
-    }
 
     async function handleDelete(debt) {
 
@@ -178,16 +159,79 @@ function Debts() {
         }
 
     }
+    async function handleViewBorrowedProducts(debt) {
+        try {
+            const data = await getCustomerCreditSales(debt.customerId);
+
+            setCustomerSales(data);
+            setIsViewOpen(true);
+        }
+        catch (error) {
+            console.error(error);
+            alert("Unable to load borrowed products.");
+        }
+    }
+
+    const overdueCount = debts.filter((d) => d.status === "Overdue").length;
+    const paidCount = debts.filter((d) => d.status === "Paid").length;
+    const outstandingTotal = debts.reduce(
+        (sum, d) => sum + Number(d.remainingBalance || 0),
+        0
+    );
 
     return (
 
-        <div>
+        <div className="space-y-6">
 
-            <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">
+                Debts
+            </h1>
 
-                <h1 className="text-3xl font-bold">
-                    Debts
-                </h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+
+                <DashboardCard
+                    title="Total debts"
+                    value={debts.length}
+                    icon={Receipt}
+                    bgColor="bg-blue-100"
+                    iconColor="text-blue-600"
+                />
+
+                <DashboardCard
+                    title="Overdue"
+                    value={overdueCount}
+                    icon={AlertTriangle}
+                    bgColor="bg-red-100"
+                    iconColor="text-red-600"
+                />
+
+                <DashboardCard
+                    title="Paid"
+                    value={paidCount}
+                    icon={CheckCircle2}
+                    bgColor="bg-green-100"
+                    iconColor="text-green-600"
+                />
+
+                <DashboardCard
+                    title="Outstanding balance"
+                    value={peso(outstandingTotal)}
+                    icon={Wallet}
+                    bgColor="bg-amber-100"
+                    iconColor="text-amber-600"
+                />
+
+            </div>
+
+            <div className="flex justify-between items-center gap-4">
+
+                <div className="flex-1 max-w-md">
+                    <SearchBar
+                        value={search}
+                        onChange={handleSearch}
+                        placeholder="Search status..."
+                    />
+                </div>
 
                 <button
                     onClick={() => {
@@ -196,55 +240,37 @@ function Debts() {
                         setIsModalOpen(true);
 
                     }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shrink-0"
                 >
 
-                    <Plus size={18} />
-
-                    Add Debt
+                    <Plus size={16} />
+                    New sale
 
                 </button>
-
-            </div>
-
-            <div className="mb-6">
-
-                <SearchBar
-                    value={search}
-                    onChange={handleSearch}
-                    placeholder="Search status..."
-                />
 
             </div>
 
             <DebtTable
                 debts={debts}
                 onEdit={(debt) => {
-
                     setSelectedDebt(debt);
                     setIsModalOpen(true);
-
                 }}
                 onDelete={handleDelete}
                 onPay={(debt) => {
-
                     setSelectedPaymentDebt(debt);
                     setIsPaymentOpen(true);
-
                 }}
+                onView={handleViewBorrowedProducts}
             />
 
-            <DebtModal
+            <SaleModal
                 isOpen={isModalOpen}
-                debt={selectedDebt}
-                customers={customers}
-                onSave={handleSave}
                 onClose={() => {
-
                     setIsModalOpen(false);
                     setSelectedDebt(null);
-
                 }}
+                onSuccess={loadDebts}
             />
             <PaymentModal
                 isOpen={isPaymentOpen}
@@ -257,6 +283,15 @@ function Debts() {
 
                 }}
             />
+            <BorrowedProductsModal
+                isOpen={isViewOpen}
+                sales={customerSales}
+                onClose={() => {
+                    setIsViewOpen(false);
+                    setCustomerSales([]);
+                }}
+            />
+
         </div>
 
     );

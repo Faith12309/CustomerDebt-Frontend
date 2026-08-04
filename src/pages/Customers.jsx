@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import CustomerTable from "../components/CustomerTable";
 import SearchBar from "../components/SearchBar";
 import CustomerModal from "../components/CustomerModal";
+import ViewCustomerModal from "../components/ViewCustomerModal";
 
 import {
     getCustomers,
@@ -19,6 +20,7 @@ function Customers() {
     const [search, setSearch] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [isViewOpen, setIsViewOpen] = useState(false);
 
     async function loadCustomers() {
 
@@ -164,12 +166,21 @@ function Customers() {
 
             <CustomerTable
                 customers={customers}
+
+                onView={(customer) => {
+
+                    setSelectedCustomer(customer);
+                    setIsViewOpen(true);
+
+                }}
+
                 onEdit={(customer) => {
 
                     setSelectedCustomer(customer);
                     setIsModalOpen(true);
 
                 }}
+
                 onDelete={handleDelete}
             />
 
@@ -185,8 +196,20 @@ function Customers() {
                 }}
             />
 
-        </div>
+            <ViewCustomerModal
+                isOpen={isViewOpen}
+                customer={selectedCustomer}
+                onClose={() => {
 
+                    setIsViewOpen(false);
+                    setSelectedCustomer(null);
+
+                }}
+            />
+
+
+        </div>
+        
     );
 
 }

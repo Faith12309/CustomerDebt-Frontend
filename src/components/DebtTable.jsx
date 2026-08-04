@@ -1,10 +1,11 @@
-import { Pencil, Trash2, Wallet } from "lucide-react";
+import { Pencil, Trash2, Wallet, Eye } from "lucide-react";
 
 function DebtTable({
     debts,
     onEdit,
     onDelete,
-    onPay
+    onPay,
+    onView
 }) {
 
     return (
@@ -132,7 +133,13 @@ function DebtTable({
                                         >
                                             <Wallet size={18} />
                                         </button>
-
+                                        <button
+                                            onClick={() => onView(debt)}
+                                            className="text-indigo-600 hover:text-indigo-800"
+                                            title="View Borrowed Products"
+                                        >
+                                            <Eye size={18} />
+                                        </button>
                                         <button
                                             onClick={() => onDelete(debt)}
                                             className="text-red-600 hover:text-red-800"

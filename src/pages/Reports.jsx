@@ -1,5 +1,29 @@
 import { useEffect, useState } from "react";
+import { Wallet, PiggyBank, CheckCircle2, AlertTriangle, FileText } from "lucide-react";
 import { getDebts } from "../services/debtService";
+import DashboardCard from "../components/DashboardCard";
+
+const peso = (value) =>
+    Number(value ?? 0).toLocaleString("en-PH", {
+        style: "currency",
+        currency: "PHP",
+    });
+
+const formatDate = (value) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString("en-PH", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+    });
+};
+
+const STATUS_STYLES = {
+    Paid: "bg-green-100 text-green-700",
+    "Partial Paid": "bg-yellow-100 text-yellow-700",
+    Overdue: "bg-red-100 text-red-700",
+};
 
 function Reports() {
 
@@ -48,46 +72,59 @@ function Reports() {
         0
     );
 
+    const paidCount = filteredReports.filter(
+        report => report.status === "Paid"
+    ).length;
+
+    const overdueCount = filteredReports.filter(
+        report => report.status === "Overdue"
+    ).length;
+
     return (
 
         <div>
 
-            <h1 className="text-3xl font-bold mb-6">
-                Reports
-            </h1>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-900">
+                    Reports
+                </h1>
+                <p className="text-gray-500 mt-2">
+                    Review debt performance and payment history across your customers.
+                </p>
+            </div>
 
             {/* Report Type */}
 
             <div className="mb-6 flex items-center gap-3">
 
-                <label className="font-medium">
-                    Report Type:
+                <label className="text-sm font-medium text-gray-700">
+                    Report type
                 </label>
 
                 <select
                     value={reportType}
                     onChange={(e) => setReportType(e.target.value)}
-                    className="border rounded-lg px-4 py-2"
+                    className="border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition"
                 >
 
                     <option value="All">
-                        All Reports
+                        All reports
                     </option>
 
                     <option value="Paid">
-                        Paid Debts
+                        Paid debts
                     </option>
 
                     <option value="Unpaid">
-                        Unpaid Debts
+                        Unpaid debts
                     </option>
 
                     <option value="Partial Paid">
-                        Partial Paid
+                        Partial paid
                     </option>
 
                     <option value="Overdue">
-                        Overdue Debts
+                        Overdue debts
                     </option>
 
                 </select>
@@ -96,159 +133,155 @@ function Reports() {
 
             {/* Summary */}
 
-            <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
 
-                <div className="bg-white shadow rounded-xl p-5">
+                <DashboardCard
+                    title="Total debt amount"
+                    value={peso(totalAmount)}
+                    icon={Wallet}
+                    bgColor="bg-blue-100"
+                    iconColor="text-blue-600"
+                />
 
-                    <p className="text-gray-500">
-                        Total Debt Amount
-                    </p>
+                <DashboardCard
+                    title="Total remaining balance"
+                    value={peso(totalRemaining)}
+                    icon={PiggyBank}
+                    bgColor="bg-amber-100"
+                    iconColor="text-amber-600"
+                />
 
-                    <h2 className="text-3xl font-bold mt-2">
+                <DashboardCard
+                    title="Paid debts"
+                    value={paidCount}
+                    icon={CheckCircle2}
+                    bgColor="bg-green-100"
+                    iconColor="text-green-600"
+                />
 
-                        {totalAmount.toLocaleString("en-PH", {
-                            style: "currency",
-                            currency: "PHP"
-                        })}
-
-                    </h2>
-
-                </div>
-
-                <div className="bg-white shadow rounded-xl p-5">
-
-                    <p className="text-gray-500">
-                        Total Remaining Balance
-                    </p>
-
-                    <h2 className="text-3xl font-bold mt-2">
-
-                        {totalRemaining.toLocaleString("en-PH", {
-                            style: "currency",
-                            currency: "PHP"
-                        })}
-
-                    </h2>
-
-                </div>
+                <DashboardCard
+                    title="Overdue debts"
+                    value={overdueCount}
+                    icon={AlertTriangle}
+                    bgColor="bg-red-100"
+                    iconColor="text-red-600"
+                />
 
             </div>
 
             {/* Table */}
 
-            <div className="bg-white rounded-xl shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
 
-                <table className="w-full">
+                <div className="overflow-x-auto">
 
-                    <thead className="bg-gray-100">
+                    <table className="w-full border-collapse">
 
-                        <tr>
+                        <thead>
 
-                            <th className="text-left px-6 py-3">
-                                Customer
-                            </th>
+                            <tr className="bg-gray-50 border-b border-gray-200">
 
-                            <th className="text-left px-6 py-3">
-                                Amount
-                            </th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                    Customer
+                                </th>
 
-                            <th className="text-left px-6 py-3">
-                                Remaining
-                            </th>
+                                <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                    Amount
+                                </th>
 
-                            <th className="text-left px-6 py-3">
-                                Status
-                            </th>
+                                <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                    Remaining
+                                </th>
 
-                            <th className="text-left px-6 py-3">
-                                Due Date
-                            </th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                    Status
+                                </th>
 
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {filteredReports.length === 0 ? (
-
-                            <tr>
-
-                                <td
-                                    colSpan="5"
-                                    className="text-center py-8 text-gray-500"
-                                >
-                                    No records found.
-                                </td>
+                                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                    Due date
+                                </th>
 
                             </tr>
 
-                        ) : (
+                        </thead>
 
-                            filteredReports.map((report) => (
+                        <tbody>
 
-                                <tr
-                                    key={report.id}
-                                    className="border-t hover:bg-gray-50"
-                                >
+                            {filteredReports.length === 0 ? (
 
-                                    <td className="px-6 py-4">
-                                        {report.customerName}
-                                    </td>
+                                <tr>
 
-                                    <td className="px-6 py-4">
-
-                                        {Number(report.amount).toLocaleString("en-PH", {
-                                            style: "currency",
-                                            currency: "PHP"
-                                        })}
-
-                                    </td>
-
-                                    <td className="px-6 py-4">
-
-                                        {Number(report.remainingBalance).toLocaleString("en-PH", {
-                                            style: "currency",
-                                            currency: "PHP"
-                                        })}
-
-                                    </td>
-
-                                    <td className="px-6 py-4">
-
-                                        <span
-                                            className={`px-3 py-1 rounded-full text-sm font-medium
-                                            ${report.status === "Paid"
-                                                    ? "bg-green-100 text-green-700"
-                                                    : report.status === "Partial Paid"
-                                                        ? "bg-yellow-100 text-yellow-700"
-                                                        : report.status === "Overdue"
-                                                            ? "bg-red-100 text-red-700"
-                                                            : "bg-gray-100 text-gray-700"
-                                                }`}
-                                        >
-
-                                            {report.status}
-
-                                        </span>
-
-                                    </td>
-
-                                    <td className="px-6 py-4">
-
-                                        {report.dueDate}
-
+                                    <td colSpan="5" className="px-6 py-16">
+                                        <div className="flex flex-col items-center justify-center text-center">
+                                            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                                                <FileText size={22} className="text-gray-400" />
+                                            </div>
+                                            <p className="text-gray-700 font-medium">
+                                                No records found
+                                            </p>
+                                            <p className="text-gray-400 text-sm mt-1">
+                                                Try a different report type.
+                                            </p>
+                                        </div>
                                     </td>
 
                                 </tr>
 
-                            ))
+                            ) : (
 
-                        )}
+                                filteredReports.map((report, index) => (
 
-                    </tbody>
+                                    <tr
+                                        key={report.id}
+                                        className={`hover:bg-blue-50/60 transition-colors ${index !== filteredReports.length - 1
+                                                ? "border-b border-gray-100"
+                                                : ""
+                                            }`}
+                                    >
 
-                </table>
+                                        <td className="px-6 py-4 font-medium text-gray-900">
+                                            {report.customerName}
+                                        </td>
+
+                                        <td className="px-6 py-4 text-right text-gray-900 tabular-nums">
+                                            {peso(report.amount)}
+                                        </td>
+
+                                        <td className="px-6 py-4 text-right text-gray-900 tabular-nums">
+                                            {peso(report.remainingBalance)}
+                                        </td>
+
+                                        <td className="px-6 py-4">
+
+                                            <span
+                                                className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_STYLES[report.status] ||
+                                                    "bg-gray-100 text-gray-700"
+                                                    }`}
+                                            >
+
+                                                {report.status}
+
+                                            </span>
+
+                                        </td>
+
+                                        <td className="px-6 py-4 text-gray-600">
+
+                                            {formatDate(report.dueDate)}
+
+                                        </td>
+
+                                    </tr>
+
+                                ))
+
+                            )}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
