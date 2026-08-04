@@ -28,22 +28,6 @@ function SaleModal({
     const [paymentType, setPaymentType] = useState("cash");
     const [dueDate, setDueDate] = useState("");
 
-    useEffect(() => {
-
-        if (isOpen) {
-
-            loadCustomers();
-            loadProducts();
-            setCustomerId("");
-            setProductId("");
-            setQuantity(1);
-            setItems([]);
-            setPaymentType("cash");
-            setDueDate("");
-        }
-
-    }, [isOpen]);
-
     const loadCustomers = async () => {
 
         try {
@@ -75,6 +59,30 @@ function SaleModal({
         }
 
     };
+
+    useEffect(() => {
+
+        if (!isOpen) return;
+
+        const initialize = async () => {
+
+            await loadCustomers();
+            await loadProducts();
+
+            setCustomerId("");
+            setProductId("");
+            setQuantity(1);
+            setItems([]);
+            setPaymentType("cash");
+            setDueDate("");
+
+        };
+
+        initialize();
+
+    }, [isOpen]);
+
+    
 
     const handleAddProduct = () => {
 
@@ -257,7 +265,7 @@ function SaleModal({
                     <p className="text-sm text-gray-500 mt-0.5">
                         {paymentType === "credit"
                             ? "Select a customer and record the products they borrowed."
-                            : "Select a customer and record the products they purchased."}
+                            : "Record products purchased by a walk-in customer."}
                     </p>
                 </div>
 

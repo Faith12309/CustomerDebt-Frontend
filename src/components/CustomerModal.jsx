@@ -1,40 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { X, UploadCloud, Loader2, CheckCircle2 } from "lucide-react";
 
+function buildInitialForm(customer) {
+    return {
+        fullName: customer?.fullName || "",
+        address: customer?.address || "",
+        contactNumber: customer?.contactNumber || "",
+        idType: customer?.idType || "",
+        idNumber: customer?.idNumber || "",
+        idImage: customer?.idImage || "",
+    };
+}
+
 function CustomerModal({ isOpen, onClose, onSave, customer }) {
-    const [form, setForm] = useState({
-        fullName: "",
-        address: "",
-        contactNumber: "",
-        idType: "",
-        idNumber: "",
-        idImage: "",
-    });
-
-    const [selectedFile, setSelectedFile] = useState(null);
+    // Lazy initializer reads `customer` once, on mount, instead of an
+    // effect that copies it into state on every change.
+    const [form, setForm] = useState(() => buildInitialForm(customer));
     const [uploading, setUploading] = useState(false);
-
-    useEffect(() => {
-        if (customer) {
-            setForm({
-                fullName: customer.fullName || "",
-                address: customer.address || "",
-                contactNumber: customer.contactNumber || "",
-                idType: customer.idType || "",
-                idNumber: customer.idNumber || "",
-                idImage: customer.idImage || "",
-            });
-        } else {
-            setForm({
-                fullName: "",
-                address: "",
-                contactNumber: "",
-                idType: "",
-                idNumber: "",
-                idImage: "",
-            });
-        }
-    }, [customer, isOpen]);
 
     const handleChange = (e) => {
         setForm((prev) => ({
@@ -46,8 +28,6 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
-        setSelectedFile(file);
 
         try {
             setUploading(true);
@@ -82,7 +62,6 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
 
     const handleRemoveImage = () => {
         setForm((prev) => ({ ...prev, idImage: "" }));
-        setSelectedFile(null);
     };
 
     const handleSubmit = (e) => {
