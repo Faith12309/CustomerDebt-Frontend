@@ -36,7 +36,7 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
             formData.append("file", file);
 
             const response = await fetch(
-                "https://localhost:7256/api/Customer/upload-id",
+                "https://customerdebtsystem.runasp.net/api/Customer/upload-id",
                 {
                     method: "POST",
                     headers: {
