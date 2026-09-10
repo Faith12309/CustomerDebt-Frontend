@@ -117,8 +117,12 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                     type="text"
                                     name="fullName"
                                     value={form.fullName}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        const filtered = e.target.value.replace(/[^A-Za-zÑñ.'\- ]/g, '');
+                                        handleChange({ target: { name: "fullName", value: filtered } });
+                                    }}
                                     placeholder="e.g. Juan Dela Cruz"
+                                    maxLength={100}
                                     className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
                                     required
                                 />
@@ -132,8 +136,12 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                     type="text"
                                     name="contactNumber"
                                     value={form.contactNumber}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        const filtered = e.target.value.replace(/[^0-9]/g, '');
+                                        handleChange({ target: { name: "contactNumber", value: filtered } });
+                                    }}
                                     placeholder="09XXXXXXXXX"
+                                    maxLength={11}
                                     className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
                                     required
                                 />
@@ -150,6 +158,7 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                 value={form.address}
                                 onChange={handleChange}
                                 placeholder="Enter complete address"
+                                maxLength={255}
                                 className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
                                 required
                             />
