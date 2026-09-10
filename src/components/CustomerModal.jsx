@@ -118,7 +118,7 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                     name="fullName"
                                     value={form.fullName}
                                     onChange={(e) => {
-                                        const filtered = e.target.value.replace(/[^A-Za-z—Ò.'\- ]/g, '');
+                                        const filtered = e.target.value.replace(/[^A-Za-z\u00D1\u00F1.'\- ]/g, '');
                                         handleChange({ target: { name: "fullName", value: filtered } });
                                     }}
                                     placeholder="e.g. Juan Dela Cruz"
