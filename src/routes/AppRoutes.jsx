@@ -7,6 +7,7 @@ import Debts from "../pages/Debts";
 import Reports from "../pages/Reports";
 import Products from "../pages/Products";
 import Sales from "../pages/Sales";
+import Users from "../pages/Users";
 
 import MainLayout from "../layouts/MainLayout";
 
@@ -32,6 +33,8 @@ function AppRoutes() {
                 <Route path="/reports" element={<Reports />} />
 
                 <Route path="/sales" element={<Sales />} />
+
+                <Route path="/users" element={<Users />} />
 
             </Route>
 

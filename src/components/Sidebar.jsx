@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import {
     LayoutDashboard,
     Users,
+    UserCog,
     Wallet,
     FileText,
     Package,
@@ -12,6 +13,7 @@ import {
 
 function Sidebar() {
     const navigate = useNavigate();
+    const role = localStorage.getItem("role");
 
     function handleLogout() {
         const confirmLogout = window.confirm(
@@ -61,6 +63,16 @@ function Sidebar() {
                 { to: "/reports", label: "Reports", icon: FileText },
             ],
         },
+        ...(role === "Admin"
+            ? [
+                {
+                    label: "Administration",
+                    items: [
+                        { to: "/users", label: "User Accounts", icon: UserCog },
+                    ],
+                },
+            ]
+            : []),
     ];
 
     return (
