@@ -12,7 +12,7 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// NEW: response interceptor — catches expired/invalid sessions (401)
+// NEW response interceptor catches expired/invalid sessions (401)
 // and sends the user back to login instead of leaving them on a
 // page with silently-failed, empty data.
 api.interceptors.response.use(
@@ -20,7 +20,7 @@ api.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             localStorage.removeItem("token");
-            // full page redirect: safe to call from outside the React tree,
+            // full page redirect safe to call from outside the React tree,
             // and guarantees a clean reset of app state.
             if (window.location.pathname !== "/login") {
                 window.location.href = "/login";
