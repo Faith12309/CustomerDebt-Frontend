@@ -1,6 +1,6 @@
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, Menu } from "lucide-react";
 
-function Header() {
+function Header({ onMenuClick }) {
     const username = localStorage.getItem("username");
     const role = localStorage.getItem("role");
 
@@ -16,18 +16,29 @@ function Header() {
         : "?";
 
     return (
-        <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between gap-4">
+        <header className="bg-white border-b border-gray-100 px-4 md:px-6 py-4 flex items-center justify-between gap-4">
 
-            <div className="min-w-0">
-                <h1 className="text-lg font-bold text-gray-900 truncate">
-                    Customer Debt Management System
-                </h1>
-                <p className="text-gray-400 text-xs mt-0.5">
-                    {today}
-                </p>
+            <div className="flex items-center gap-3 min-w-0">
+                {/* Hamburger - mobile/tablet only */}
+                <button
+                    onClick={onMenuClick}
+                    className="lg:hidden p-2 -ml-1 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                    aria-label="Open menu"
+                >
+                    <Menu size={22} />
+                </button>
+
+                <div className="min-w-0">
+                    <h1 className="text-base md:text-lg font-bold text-gray-900 truncate">
+                        Customer Debt Management System
+                    </h1>
+                    <p className="text-gray-400 text-xs mt-0.5 hidden sm:block">
+                        {today}
+                    </p>
+                </div>
             </div>
 
-            <div className="flex items-center gap-4 shrink-0">
+            <div className="flex items-center gap-3 md:gap-4 shrink-0">
 
                 {/* Search */}
                 <div className="relative hidden md:block">
@@ -50,7 +61,7 @@ function Header() {
                     <Bell size={18} />
                 </button>
 
-                <div className="w-px h-8 bg-gray-100" />
+                <div className="w-px h-8 bg-gray-100 hidden sm:block" />
 
                 {/* User */}
                 <div className="flex items-center gap-3">

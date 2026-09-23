@@ -8,29 +8,26 @@ import {
     Package,
     ShoppingCart,
     LogOut,
-    Store
+    Store,
+    X
 } from "lucide-react";
 
-function Sidebar() {
+function Sidebar({ isOpen, onClose }) {
     const navigate = useNavigate();
     const role = localStorage.getItem("role");
 
     function handleLogout() {
-        const confirmLogout = window.confirm(
-            "Are you sure you want to logout?"
-        );
-
+        const confirmLogout = window.confirm("Are you sure you want to logout?");
         if (!confirmLogout) return;
 
         localStorage.removeItem("token");
         localStorage.removeItem("username");
         localStorage.removeItem("role");
-
         navigate("/login");
     }
 
     const navStyle = ({ isActive }) =>
-        `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-colors duration-200
+        `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-200
         ${isActive
             ? "bg-blue-600 text-white font-medium"
             : "text-gray-400 hover:bg-white/5 hover:text-white"
@@ -76,56 +73,85 @@ function Sidebar() {
     ];
 
     return (
-        <aside className="w-64 min-h-screen bg-gray-900 border-r border-white/5 flex flex-col shrink-0">
+        <>
+            {/* Mobile overlay */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                    onClick={onClose}
+                />
+            )}
 
-            {/* Logo */}
-            <div className="px-6 py-6 border-b border-white/5">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shrink-0">
-                        <Store size={20} className="text-white" />
-                    </div>
-                    <div className="min-w-0">
-                        <h1 className="text-white font-bold text-sm leading-tight truncate">
-                            CLEOFER STORE
-                        </h1>
-                        <p className="text-gray-500 text-xs mt-0.5">
-                            Debt Management
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Navigation */}
-            <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto">
-                {NAV_SECTIONS.map((section) => (
-                    <div key={section.label}>
-                        <p className="px-4 text-xs font-semibold uppercase tracking-wider text-gray-600 mb-2">
-                            {section.label}
-                        </p>
-                        <div className="space-y-1">
-                            {section.items.map(({ to, label, icon: Icon }) => (
-                                <NavLink key={to} to={to} className={navStyle}>
-                                    <Icon size={18} />
-                                    {label}
-                                </NavLink>
-                            ))}
+            <aside
+                className={`
+                    fixed lg:static inset-y-0 left-0 z-50
+                    w-64 h-full bg-gray-900 border-r border-white/5
+                    flex flex-col shrink-0
+                    transform transition-transform duration-300 ease-in-out
+                    ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+                `}
+            >
+                {/* Logo + Close button (mobile) */}
+                <div className="px-5 py-5 border-b border-white/5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shrink-0">
+                            <Store size={18} className="text-white" />
+                        </div>
+                        <div className="min-w-0">
+                            <h1 className="text-white font-bold text-sm leading-tight truncate">
+                                CLEOFER STORE
+                            </h1>
+                            <p className="text-gray-500 text-xs mt-0.5">
+                                Debt Management
+                            </p>
                         </div>
                     </div>
-                ))}
-            </nav>
 
-            {/* Bottom */}
-            <div className="p-4 border-t border-white/5">
-                <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-3 w-full rounded-lg px-4 py-2.5 text-sm text-gray-400 hover:bg-red-600 hover:text-white transition-colors duration-200"
-                >
-                    <LogOut size={18} />
-                    Logout
-                </button>
-            </div>
+                    {/* Close button - mobile only */}
+                    <button
+                        onClick={onClose}
+                        className="lg:hidden p-1.5 rounded-lg text-gray-400 hover:bg-white/10 hover:text-white"
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
 
-        </aside>
+                {/* Navigation */}
+                <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
+                    {NAV_SECTIONS.map((section) => (
+                        <div key={section.label}>
+                            <p className="px-3 text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                                {section.label}
+                            </p>
+                            <div className="space-y-0.5">
+                                {section.items.map(({ to, label, icon: Icon }) => (
+                                    <NavLink
+                                        key={to}
+                                        to={to}
+                                        className={navStyle}
+                                        onClick={onClose} // close sidebar when clicking a link on mobile
+                                    >
+                                        <Icon size={17} />
+                                        {label}
+                                    </NavLink>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </nav>
+
+                {/* Logout */}
+                <div className="p-3 border-t border-white/5">
+                    <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-red-600 hover:text-white transition-colors duration-200"
+                    >
+                        <LogOut size={17} />
+                        Logout
+                    </button>
+                </div>
+            </aside>
+        </>
     );
 }
 
