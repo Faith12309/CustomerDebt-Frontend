@@ -1,33 +1,51 @@
 import { useState } from "react";
 import { X, Package } from "lucide-react";
-import { createProduct } from "../services/productService";
+import { createProduct, getProducts } from "../services/productService";
 
 const ProductModal = ({ isOpen, onClose }) => {
-
     const [form, setForm] = useState({
         name: "",
         category: "",
         unit: "",
         price: "",
-        stock: ""
+        stock: "",
     });
 
     if (!isOpen) return null;
 
     const handleSave = async () => {
+        if (!form.name.trim() || !form.price || form.stock === "") {
+            alert("Please fill in product name, price, and stock.");
+            return;
+        }
+
         try {
+            const existing = await getProducts();
+
+            // Normalize: lowercase + remove all spaces
+            const normalize = (str) =>
+                str.trim().toLowerCase().replace(/\s+/g, "");
+
+            const nameExists = existing.some(
+                (p) => normalize(p.name) === normalize(form.name)
+            );
+
+            if (nameExists) {
+                alert("A product with this name already exists.");
+                return;
+            }
+
             await createProduct({
-                ...form,
+                name: form.name.trim(),
+                category: form.category.trim(),
+                unit: form.unit.trim().toLowerCase(),
                 price: Number(form.price),
                 stock: Number(form.stock),
             });
 
             alert("Product added successfully!");
-
             onClose();
-
             window.location.reload();
-
         } catch (error) {
             console.error(error);
             alert("Failed to add product.");
@@ -40,7 +58,6 @@ const ProductModal = ({ isOpen, onClose }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
             <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-gray-100">
-
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
                     <div className="flex items-center gap-3">
@@ -69,7 +86,6 @@ const ProductModal = ({ isOpen, onClose }) => {
 
                 {/* Form */}
                 <div className="px-6 py-6 space-y-4">
-
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">
                             Product name <span className="text-red-500">*</span>
@@ -80,10 +96,7 @@ const ProductModal = ({ isOpen, onClose }) => {
                             className={inputClass}
                             value={form.name}
                             onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    name: e.target.value
-                                })
+                                setForm({ ...form, name: e.target.value })
                             }
                         />
                     </div>
@@ -101,7 +114,7 @@ const ProductModal = ({ isOpen, onClose }) => {
                                 onChange={(e) =>
                                     setForm({
                                         ...form,
-                                        category: e.target.value
+                                        category: e.target.value,
                                     })
                                 }
                             />
@@ -117,10 +130,7 @@ const ProductModal = ({ isOpen, onClose }) => {
                                 className={inputClass}
                                 value={form.unit}
                                 onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        unit: e.target.value
-                                    })
+                                    setForm({ ...form, unit: e.target.value })
                                 }
                             />
                         </div>
@@ -145,7 +155,7 @@ const ProductModal = ({ isOpen, onClose }) => {
                                     onChange={(e) =>
                                         setForm({
                                             ...form,
-                                            price: e.target.value
+                                            price: e.target.value,
                                         })
                                     }
                                 />
@@ -163,20 +173,15 @@ const ProductModal = ({ isOpen, onClose }) => {
                                 className={inputClass}
                                 value={form.stock}
                                 onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        stock: e.target.value
-                                    })
+                                    setForm({ ...form, stock: e.target.value })
                                 }
                             />
                         </div>
                     </div>
-
                 </div>
 
                 {/* Footer */}
                 <div className="flex justify-end gap-3 px-6 py-5 border-t border-gray-100 bg-gray-50/50">
-
                     <button
                         onClick={onClose}
                         className="px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 font-medium text-sm transition-colors"
@@ -190,9 +195,7 @@ const ProductModal = ({ isOpen, onClose }) => {
                     >
                         Save product
                     </button>
-
                 </div>
-
             </div>
         </div>
     );
