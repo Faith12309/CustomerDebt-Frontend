@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, Users as UsersIcon } from "lucide-react";
+import { Pencil, Trash2, Users as UsersIcon, Plus } from "lucide-react";
 import { getUsers, deleteUser } from "../services/userService";
-
 import EditUserModal from "../components/EditUserModal";
 import DeleteUserModal from "../components/DeleteUserModal";
+import AddUserModal from "../components/AddUserModal";
 
 const Users = () => {
-
     const [users, setUsers] = useState([]);
-
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+    const [showAddModal, setShowAddModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
 
     const loadUsers = async () => {
@@ -43,18 +41,21 @@ const Users = () => {
 
     return (
         <div>
-
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">
-                    Users
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">Users</h1>
+
+                <button
+                    onClick={() => setShowAddModal(true)}
+                    className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                    <Plus size={16} />
+                    Add account
+                </button>
             </div>
 
             <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
-
                     <table className="w-full border-collapse">
-
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-200">
                                 <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -70,13 +71,14 @@ const Users = () => {
                         </thead>
 
                         <tbody>
-
                             {users.length > 0 ? (
-
                                 users.map((u, index) => (
                                     <tr
                                         key={u.id}
-                                        className={`hover:bg-blue-50/60 transition-colors ${index !== users.length - 1 ? "border-b border-gray-100" : ""}`}
+                                        className={`hover:bg-blue-50/60 transition-colors ${index !== users.length - 1
+                                                ? "border-b border-gray-100"
+                                                : ""
+                                            }`}
                                     >
                                         <td className="px-6 py-4 font-medium text-gray-900">
                                             {u.username}
@@ -90,7 +92,6 @@ const Users = () => {
 
                                         <td className="px-6 py-4">
                                             <div className="flex justify-center gap-2">
-
                                                 <button
                                                     onClick={() => {
                                                         setSelectedUser(u);
@@ -114,20 +115,19 @@ const Users = () => {
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>
-
                                             </div>
                                         </td>
-
                                     </tr>
                                 ))
-
                             ) : (
-
                                 <tr>
                                     <td colSpan="3" className="px-6 py-16">
                                         <div className="flex flex-col items-center justify-center text-center">
                                             <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-                                                <UsersIcon size={22} className="text-gray-400" />
+                                                <UsersIcon
+                                                    size={22}
+                                                    className="text-gray-400"
+                                                />
                                             </div>
                                             <p className="text-gray-700 font-medium">
                                                 No users found
@@ -135,15 +135,17 @@ const Users = () => {
                                         </div>
                                     </td>
                                 </tr>
-
                             )}
-
                         </tbody>
-
                     </table>
-
                 </div>
             </div>
+
+            <AddUserModal
+                isOpen={showAddModal}
+                onClose={() => setShowAddModal(false)}
+                onSaved={loadUsers}
+            />
 
             <EditUserModal
                 isOpen={showEditModal}
@@ -158,7 +160,6 @@ const Users = () => {
                 user={selectedUser}
                 onDelete={handleDelete}
             />
-
         </div>
     );
 };
