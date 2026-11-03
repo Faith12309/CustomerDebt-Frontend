@@ -78,7 +78,7 @@ function DashboardCharts({
                 ],
                 backgroundColor: [
                     "#10B981",
-                    "#4F46E5"
+                    "#0F62D6"
                 ],
                 borderRadius: 10,
                 borderSkipped: false,

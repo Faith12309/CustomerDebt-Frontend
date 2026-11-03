@@ -131,11 +131,16 @@ function Customers() {
 
         <div>
 
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
 
-                <h1 className="text-3xl font-bold">
-                    Customers
-                </h1>
+                <div>
+                    <h1 className="text-[28px] leading-9 font-bold tracking-tight text-slate-900">
+                        Customers
+                    </h1>
+                    <p className="text-sm text-slate-500 mt-1">
+                        {customers.length} {customers.length === 1 ? "customer" : "customers"}
+                    </p>
+                </div>
 
                 <button
                     onClick={() => {
@@ -144,11 +149,11 @@ function Customers() {
                         setIsModalOpen(true);
 
                     }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                    className="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-control text-sm font-semibold flex items-center gap-2 transition-colors"
                 >
 
                     <Plus size={18} />
-                    Add Customer
+                    Add customer
 
                 </button>
 
@@ -209,7 +214,7 @@ function Customers() {
 
 
         </div>
-        
+
     );
 
 }
