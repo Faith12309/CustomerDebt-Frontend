@@ -7,7 +7,6 @@ import SaleModal from "../components/SaleModal";
 import SearchBar from "../components/SearchBar";
 import { getCustomerCreditSales } from "../services/saleService";
 import BorrowedProductsModal from "../components/BorrowedProductsModal";
-import DashboardCard from "../components/DashboardCard";
 
 import {
     getDebts,
@@ -23,6 +22,31 @@ const peso = (value) =>
         currency: "PHP",
         maximumFractionDigits: 0,
     });
+
+const TONES = {
+    brand: "bg-brand-50 text-brand-600",
+    red: "bg-red-50 text-red-600",
+    green: "bg-emerald-50 text-emerald-600",
+    amber: "bg-amber-50 text-amber-600",
+};
+
+function StatCard({ icon: Icon, label, value, tone = "brand" }) {
+    return (
+        <div className="rounded-card border border-surface-line bg-white p-5 shadow-card">
+            <div className="flex items-center gap-3">
+                <span
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-control ${TONES[tone]}`}
+                >
+                    <Icon size={20} />
+                </span>
+                <p className="truncate text-[13px] font-medium text-slate-500">{label}</p>
+            </div>
+            <p className="mt-4 truncate text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
+                {value}
+            </p>
+        </div>
+    );
+}
 
 function Debts() {
 
@@ -183,42 +207,38 @@ function Debts() {
 
         <div className="space-y-6">
 
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-[28px] leading-9 font-bold tracking-tight text-slate-900">
                 Debts
             </h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
 
-                <DashboardCard
-                    title="Total debts"
+                <StatCard
+                    label="Total debts"
                     value={debts.length}
                     icon={Receipt}
-                    bgColor="bg-blue-100"
-                    iconColor="text-blue-600"
+                    tone="brand"
                 />
 
-                <DashboardCard
-                    title="Overdue"
+                <StatCard
+                    label="Overdue"
                     value={overdueCount}
                     icon={AlertTriangle}
-                    bgColor="bg-red-100"
-                    iconColor="text-red-600"
+                    tone="red"
                 />
 
-                <DashboardCard
-                    title="Paid"
+                <StatCard
+                    label="Paid"
                     value={paidCount}
                     icon={CheckCircle2}
-                    bgColor="bg-green-100"
-                    iconColor="text-green-600"
+                    tone="green"
                 />
 
-                <DashboardCard
-                    title="Outstanding balance"
+                <StatCard
+                    label="Outstanding balance"
                     value={peso(outstandingTotal)}
                     icon={Wallet}
-                    bgColor="bg-amber-100"
-                    iconColor="text-amber-600"
+                    tone="amber"
                 />
 
             </div>
@@ -240,7 +260,7 @@ function Debts() {
                         setIsModalOpen(true);
 
                     }}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shrink-0"
+                    className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-control text-sm font-semibold transition-colors shrink-0"
                 >
 
                     <Plus size={16} />
