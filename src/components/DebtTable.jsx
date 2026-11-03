@@ -1,5 +1,7 @@
 import { Pencil, Trash2, Wallet, Eye } from "lucide-react";
 
+
+const role = localStorage.getItem("role");
 function DebtTable({
     debts,
     onEdit,
@@ -99,15 +101,13 @@ function DebtTable({
                                 </td>
 
                                 <td className="px-6 py-4">
-
                                     <div className="flex justify-center gap-3">
-
                                         <button
                                             onClick={() => onEdit(debt)}
                                             disabled={debt.status === "Paid"}
                                             className={`${debt.status === "Paid"
-                                                    ? "text-gray-400 cursor-not-allowed"
-                                                    : "text-blue-600 hover:text-blue-800"
+                                                ? "text-gray-400 cursor-not-allowed"
+                                                : "text-blue-600 hover:text-blue-800"
                                                 }`}
                                             title={
                                                 debt.status === "Paid"
@@ -117,13 +117,12 @@ function DebtTable({
                                         >
                                             <Pencil size={18} />
                                         </button>
-
                                         <button
                                             onClick={() => onPay(debt)}
                                             disabled={debt.status === "Paid"}
                                             className={`${debt.status === "Paid"
-                                                    ? "text-gray-400 cursor-not-allowed"
-                                                    : "text-green-600 hover:text-green-800"
+                                                ? "text-gray-400 cursor-not-allowed"
+                                                : "text-green-600 hover:text-green-800"
                                                 }`}
                                             title={
                                                 debt.status === "Paid"
@@ -140,16 +139,16 @@ function DebtTable({
                                         >
                                             <Eye size={18} />
                                         </button>
-                                        <button
-                                            onClick={() => onDelete(debt)}
-                                            className="text-red-600 hover:text-red-800"
-                                            title="Delete Debt"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
-
+                                        {role === "Admin" && (
+                                            <button
+                                                onClick={() => onDelete(debt)}
+                                                className="text-red-600 hover:text-red-800"
+                                                title="Delete Debt"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        )}
                                     </div>
-
                                 </td>
 
                             </tr>

@@ -2,6 +2,7 @@ import { Pencil, Trash2, Eye, Users, MapPin, Phone } from "lucide-react";
 
 // Rotates through a small, deliberate palette so each customer gets a
 // consistent, distinguishable avatar color based on their name.
+const role = localStorage.getItem("role");
 const AVATAR_STYLES = [
     "bg-blue-50 text-blue-700",
     "bg-violet-50 text-violet-700",
@@ -106,7 +107,6 @@ function CustomerTable({ customers, onEdit, onDelete, onView }) {
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex justify-center gap-2">
-
                                         <button
                                             onClick={() => onView(customer)}
                                             title="View customer"
@@ -114,7 +114,6 @@ function CustomerTable({ customers, onEdit, onDelete, onView }) {
                                         >
                                             <Eye size={16} />
                                         </button>
-
                                         <button
                                             onClick={() => onEdit(customer)}
                                             title="Edit customer"
@@ -122,15 +121,15 @@ function CustomerTable({ customers, onEdit, onDelete, onView }) {
                                         >
                                             <Pencil size={16} />
                                         </button>
-
-                                        <button
-                                            onClick={() => onDelete(customer)}
-                                            title="Delete customer"
-                                            className="p-2 rounded-lg text-red-600 hover:bg-red-100"
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
-
+                                        {role === "Admin" && (
+                                            <button
+                                                onClick={() => onDelete(customer)}
+                                                title="Delete customer"
+                                                className="p-2 rounded-lg text-red-600 hover:bg-red-100"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        )}
                                     </div>
                                 </td>
                             </tr>
