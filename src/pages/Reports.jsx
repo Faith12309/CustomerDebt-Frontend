@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Wallet, PiggyBank, CheckCircle2, AlertTriangle, FileText, Download } from "lucide-react";
 import { getDebts } from "../services/debtService";
-import DashboardCard from "../components/DashboardCard";
 
 const peso = (value) =>
     Number(value ?? 0).toLocaleString("en-PH", {
@@ -19,11 +18,53 @@ const formatDate = (value) => {
     });
 };
 
+/* Same status colors as the rest of the system */
 const STATUS_STYLES = {
-    Paid: "bg-green-100 text-green-700",
-    "Partial Paid": "bg-yellow-100 text-yellow-700",
-    Overdue: "bg-red-100 text-red-700",
+    Paid: { chip: "bg-emerald-50 text-emerald-700", dot: "bg-status-paid" },
+    "Partial Paid": { chip: "bg-amber-50 text-amber-700", dot: "bg-status-partial" },
+    Unpaid: { chip: "bg-orange-50 text-orange-700", dot: "bg-status-unpaid" },
+    Overdue: { chip: "bg-red-50 text-red-700", dot: "bg-status-overdue" },
 };
+
+function StatusBadge({ status }) {
+    const s = STATUS_STYLES[status] || {
+        chip: "bg-slate-100 text-slate-600",
+        dot: "bg-slate-400",
+    };
+    return (
+        <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${s.chip}`}
+        >
+            <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
+            {status}
+        </span>
+    );
+}
+
+const TONES = {
+    brand: "bg-brand-50 text-brand-600",
+    red: "bg-red-50 text-red-600",
+    green: "bg-emerald-50 text-emerald-600",
+    amber: "bg-amber-50 text-amber-600",
+};
+
+function StatCard({ icon: Icon, label, value, tone = "brand" }) {
+    return (
+        <div className="rounded-card border border-surface-line bg-white p-5 shadow-card">
+            <div className="flex items-center gap-3">
+                <span
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-control ${TONES[tone]}`}
+                >
+                    <Icon size={20} />
+                </span>
+                <p className="truncate text-[13px] font-medium text-slate-500">{label}</p>
+            </div>
+            <p className="mt-4 truncate text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
+                {value}
+            </p>
+        </div>
+    );
+}
 
 function Reports() {
     const [reports, setReports] = useState([]);
@@ -89,7 +130,7 @@ function Reports() {
             // Title
             doc.setFontSize(16);
             doc.setFont("helvetica", "bold");
-            doc.text("Cleof er Store - Debt Report", 14, 18);
+            doc.text("Cleofer Store - Debt Report", 14, 18);
 
             doc.setFontSize(11);
             doc.setFont("helvetica", "normal");
@@ -135,12 +176,12 @@ function Reports() {
                     cellPadding: 3,
                 },
                 headStyles: {
-                    fillColor: [37, 99, 235],
+                    fillColor: [15, 98, 214],
                     textColor: 255,
                     fontStyle: "bold",
                 },
                 alternateRowStyles: {
-                    fillColor: [245, 247, 250],
+                    fillColor: [246, 247, 251],
                 },
                 columnStyles: {
                     1: { halign: "right" },
@@ -173,23 +214,23 @@ function Reports() {
 
     return (
         <div>
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900">Reports</h1>
-                <p className="text-gray-500 mt-2">
+            <div className="mb-6">
+                <h1 className="text-[28px] leading-9 font-bold tracking-tight text-slate-900">Reports</h1>
+                <p className="text-sm text-slate-500 mt-1">
                     Review debt performance and payment history across your customers.
                 </p>
             </div>
 
             {/* Report Type + Export */}
             <div className="mb-6 flex flex-wrap items-center gap-3">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-slate-700">
                     Report type
                 </label>
 
                 <select
                     value={reportType}
                     onChange={(e) => setReportType(e.target.value)}
-                    className="border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition"
+                    className="h-10 rounded-control border border-surface-line bg-white px-4 text-sm text-slate-800 shadow-card outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
                 >
                     <option value="All">All reports</option>
                     <option value="Paid">Paid debts</option>
@@ -200,64 +241,60 @@ function Reports() {
 
                 <button
                     onClick={handleExport}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-control bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 transition-colors"
                 >
                     <Download size={16} />
-                    Export
+                    Export PDF
                 </button>
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-                <DashboardCard
-                    title="Total debt amount"
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+                <StatCard
+                    label="Total debt amount"
                     value={peso(totalAmount)}
                     icon={Wallet}
-                    bgColor="bg-blue-100"
-                    iconColor="text-blue-600"
+                    tone="brand"
                 />
-                <DashboardCard
-                    title="Total remaining balance"
+                <StatCard
+                    label="Total remaining balance"
                     value={peso(totalRemaining)}
                     icon={PiggyBank}
-                    bgColor="bg-amber-100"
-                    iconColor="text-amber-600"
+                    tone="amber"
                 />
-                <DashboardCard
-                    title="Paid debts"
+                <StatCard
+                    label="Paid debts"
                     value={paidCount}
                     icon={CheckCircle2}
-                    bgColor="bg-green-100"
-                    iconColor="text-green-600"
+                    tone="green"
                 />
-                <DashboardCard
-                    title="Overdue debts"
+                <StatCard
+                    label="Overdue debts"
                     value={overdueCount}
                     icon={AlertTriangle}
-                    bgColor="bg-red-100"
-                    iconColor="text-red-600"
+                    tone="red"
                 />
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-card shadow-card border border-surface-line overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                         <thead>
-                            <tr className="bg-gray-50 border-b border-gray-200">
-                                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                            <tr className="bg-surface-muted/60 border-b border-surface-line">
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500">
                                     Customer
                                 </th>
-                                <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500">
                                     Amount
                                 </th>
-                                <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500">
                                     Remaining
                                 </th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500">
                                     Status
                                 </th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500">
                                     Due date
                                 </th>
                             </tr>
@@ -267,13 +304,13 @@ function Reports() {
                                 <tr>
                                     <td colSpan="5" className="px-6 py-16">
                                         <div className="flex flex-col items-center justify-center text-center">
-                                            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-                                                <FileText size={22} className="text-gray-400" />
+                                            <div className="w-12 h-12 rounded-full bg-brand-50 flex items-center justify-center mb-3">
+                                                <FileText size={22} className="text-brand-600" />
                                             </div>
-                                            <p className="text-gray-700 font-medium">
+                                            <p className="text-slate-800 font-semibold">
                                                 No records found
                                             </p>
-                                            <p className="text-gray-400 text-sm mt-1">
+                                            <p className="text-slate-500 text-sm mt-1">
                                                 Try a different report type.
                                             </p>
                                         </div>
@@ -283,30 +320,24 @@ function Reports() {
                                 filteredReports.map((report, index) => (
                                     <tr
                                         key={report.id}
-                                        className={`hover:bg-blue-50/60 transition-colors ${index !== filteredReports.length - 1
-                                                ? "border-b border-gray-100"
-                                                : ""
+                                        className={`hover:bg-surface-muted/70 transition-colors ${index !== filteredReports.length - 1
+                                            ? "border-b border-surface-line"
+                                            : ""
                                             }`}
                                     >
-                                        <td className="px-6 py-4 font-medium text-gray-900">
+                                        <td className="px-6 py-4 font-semibold text-slate-900">
                                             {report.customerName}
                                         </td>
-                                        <td className="px-6 py-4 text-right text-gray-900 tabular-nums">
+                                        <td className="px-6 py-4 text-right text-slate-600 tabular-nums">
                                             {peso(report.amount)}
                                         </td>
-                                        <td className="px-6 py-4 text-right text-gray-900 tabular-nums">
+                                        <td className="px-6 py-4 text-right font-semibold text-slate-900 tabular-nums">
                                             {peso(report.remainingBalance)}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_STYLES[report.status] ||
-                                                    "bg-gray-100 text-gray-700"
-                                                    }`}
-                                            >
-                                                {report.status}
-                                            </span>
+                                            <StatusBadge status={report.status} />
                                         </td>
-                                        <td className="px-6 py-4 text-gray-600">
+                                        <td className="px-6 py-4 text-slate-600">
                                             {formatDate(report.dueDate)}
                                         </td>
                                     </tr>

@@ -88,31 +88,36 @@ const Products = () => {
     return (
         <div>
 
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
 
-                <h1 className="text-2xl font-bold text-gray-900">
-                    Products
-                </h1>
+                <div>
+                    <h1 className="text-[28px] leading-9 font-bold tracking-tight text-slate-900">
+                        Products
+                    </h1>
+                    <p className="text-sm text-slate-500 mt-1">
+                        {products.length} {products.length === 1 ? "product" : "products"}
+                    </p>
+                </div>
 
                 <div className="flex gap-3">
 
                     <div className="relative">
                         <Search
                             size={16}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
                         />
                         <input
                             type="text"
                             placeholder="Search product..."
                             value={search}
                             onChange={(e) => handleSearch(e.target.value)}
-                            className="border border-gray-200 rounded-lg pl-9 pr-4 py-2 w-64 text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition"
+                            className="h-10 w-64 rounded-control border border-surface-line bg-white pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 shadow-card outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
                         />
                     </div>
 
                     <button
                         onClick={() => setShowModal(true)}
-                        className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                        className="flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-control text-sm font-semibold transition-colors"
                     >
                         <Plus size={16} />
                         Add product
@@ -122,29 +127,29 @@ const Products = () => {
 
             </div>
 
-            <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-card shadow-card border border-surface-line overflow-hidden">
                 <div className="overflow-x-auto">
 
                     <table className="w-full border-collapse">
 
                         <thead>
-                            <tr className="bg-gray-50 border-b border-gray-200">
-                                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                            <tr className="bg-surface-muted/60 border-b border-surface-line">
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500">
                                     Name
                                 </th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500">
                                     Category
                                 </th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500">
                                     Unit
                                 </th>
-                                <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500">
                                     Price
                                 </th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500">
                                     Stock
                                 </th>
-                                <th className="text-center px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                <th className="text-center px-6 py-3 text-xs font-semibold text-slate-500">
                                     Actions
                                 </th>
                             </tr>
@@ -160,39 +165,40 @@ const Products = () => {
                                     return (
                                         <tr
                                             key={p.id}
-                                            className={`hover:bg-blue-50/60 transition-colors ${index !== products.length - 1
-                                                    ? "border-b border-gray-100"
-                                                    : ""
+                                            className={`hover:bg-surface-muted/70 transition-colors ${index !== products.length - 1
+                                                ? "border-b border-surface-line"
+                                                : ""
                                                 }`}
                                         >
-                                            <td className="px-6 py-4 font-medium text-gray-900">
+                                            <td className="px-6 py-4 font-semibold text-slate-900">
                                                 {p.name}
                                             </td>
 
                                             <td className="px-6 py-4">
-                                                <span className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                                <span className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-brand-50 text-brand-700">
                                                     {p.category}
                                                 </span>
                                             </td>
 
-                                            <td className="px-6 py-4 text-gray-600">
+                                            <td className="px-6 py-4 text-slate-600">
                                                 {p.unit}
                                             </td>
 
-                                            <td className="px-6 py-4 text-right text-gray-900 tabular-nums">
+                                            <td className="px-6 py-4 text-right font-semibold text-slate-900 tabular-nums">
                                                 {peso(p.price)}
                                             </td>
 
                                             <td className="px-6 py-4">
                                                 <span
-                                                    className={`inline-flex items-center gap-1.5 text-sm font-medium ${isLowStock
-                                                            ? "text-amber-600"
-                                                            : "text-gray-700"
+                                                    className={`inline-flex items-center gap-2 text-sm font-semibold tabular-nums ${isLowStock
+                                                        ? "text-amber-700"
+                                                        : "text-slate-700"
                                                         }`}
                                                 >
                                                     {p.stock}
                                                     {isLowStock && (
-                                                        <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                                                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">
+                                                            <span className="h-1.5 w-1.5 rounded-full bg-status-partial" />
                                                             Low
                                                         </span>
                                                     )}
@@ -200,7 +206,7 @@ const Products = () => {
                                             </td>
 
                                             <td className="px-6 py-4">
-                                                <div className="flex justify-center gap-2">
+                                                <div className="flex justify-center gap-1">
 
                                                     <button
                                                         onClick={() => {
@@ -209,7 +215,7 @@ const Products = () => {
                                                         }}
                                                         title="Edit product"
                                                         aria-label={`Edit ${p.name}`}
-                                                        className="p-2 rounded-lg text-amber-600 hover:bg-amber-100 hover:text-amber-700 transition-colors"
+                                                        className="p-2 rounded-control text-slate-400 hover:bg-brand-50 hover:text-brand-600 transition-colors"
                                                     >
                                                         <Pencil size={16} />
                                                     </button>
@@ -221,7 +227,7 @@ const Products = () => {
                                                         }}
                                                         title="Restock product"
                                                         aria-label={`Restock ${p.name}`}
-                                                        className="p-2 rounded-lg text-green-600 hover:bg-green-100 hover:text-green-700 transition-colors"
+                                                        className="p-2 rounded-control text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
                                                     >
                                                         <PackagePlus size={16} />
                                                     </button>
@@ -233,7 +239,7 @@ const Products = () => {
                                                         }}
                                                         title="Delete product"
                                                         aria-label={`Delete ${p.name}`}
-                                                        className="p-2 rounded-lg text-red-600 hover:bg-red-100 hover:text-red-700 transition-colors"
+                                                        className="p-2 rounded-control text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
                                                     >
                                                         <Trash2 size={16} />
                                                     </button>
@@ -250,13 +256,13 @@ const Products = () => {
                                 <tr>
                                     <td colSpan="6" className="px-6 py-16">
                                         <div className="flex flex-col items-center justify-center text-center">
-                                            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-                                                <Boxes size={22} className="text-gray-400" />
+                                            <div className="w-12 h-12 rounded-full bg-brand-50 flex items-center justify-center mb-3">
+                                                <Boxes size={22} className="text-brand-600" />
                                             </div>
-                                            <p className="text-gray-700 font-medium">
+                                            <p className="text-slate-800 font-semibold">
                                                 No products found
                                             </p>
-                                            <p className="text-gray-400 text-sm mt-1">
+                                            <p className="text-slate-500 text-sm mt-1">
                                                 Try a different search, or add a new product.
                                             </p>
                                         </div>
