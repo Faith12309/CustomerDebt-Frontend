@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from "react";
-import { Plus, Trash2, ShoppingCart } from "lucide-react";
+import { Plus, Trash2, ShoppingCart, X } from "lucide-react";
 
 import { getCustomers } from "../services/customerService";
 import { getProducts } from "../services/productService";
@@ -10,6 +10,10 @@ const peso = (value) =>
         style: "currency",
         currency: "PHP",
     });
+
+const labelCls = "block text-sm font-medium text-slate-700 mb-1.5";
+const fieldCls =
+    "w-full h-10 rounded-control border border-surface-line bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10";
 
 function SaleModal({
     isOpen,
@@ -82,7 +86,7 @@ function SaleModal({
 
     }, [isOpen]);
 
-    
+
 
     const handleAddProduct = () => {
 
@@ -251,22 +255,41 @@ function SaleModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/50 backdrop-blur-[2px]">
 
-            <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl bg-white shadow-2xl border border-gray-100">
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="sale-modal-title"
+                className="relative w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden rounded-card bg-white shadow-pop border border-surface-line"
+            >
 
                 {/* Header */}
-                <div className="px-8 py-5 border-b border-gray-100 shrink-0">
-                    <h2 className="text-xl font-bold text-gray-900">
-                        {paymentType === "credit"
-                            ? "New Credit Sale"
-                            : "New Cash Sale"}
-                    </h2>
-                    <p className="text-sm text-gray-500 mt-0.5">
-                        {paymentType === "credit"
-                            ? "Select a customer and record the products they borrowed."
-                            : "Record products purchased by a walk-in customer."}
-                    </p>
+                <div className="flex items-start justify-between gap-4 px-8 py-5 border-b border-surface-line shrink-0">
+                    <div>
+                        <h2
+                            id="sale-modal-title"
+                            className="text-xl font-bold tracking-tight text-slate-900"
+                        >
+                            {paymentType === "credit"
+                                ? "New credit sale"
+                                : "New cash sale"}
+                        </h2>
+                        <p className="text-sm text-slate-500 mt-0.5">
+                            {paymentType === "credit"
+                                ? "Select a customer and record the products they borrowed."
+                                : "Record products purchased by a walk-in customer."}
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label="Close"
+                        className="p-1.5 -mr-2 rounded-control text-slate-400 hover:bg-surface-muted hover:text-slate-700 transition-colors"
+                    >
+                        <X size={18} />
+                    </button>
                 </div>
 
                 <form
@@ -278,14 +301,14 @@ function SaleModal({
                     {/* Payment Type */}
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                            Payment Type
+                        <label className={labelCls}>
+                            Payment type
                         </label>
 
                         <select
                             value={paymentType}
                             onChange={(e) => setPaymentType(e.target.value)}
-                            className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 bg-white focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
+                            className={fieldCls}
                         >
                             <option value="cash">Cash</option>
                             <option value="credit">Credit</option>
@@ -294,18 +317,15 @@ function SaleModal({
 
                     {paymentType === "credit" && (
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                Due Date
+                            <label className={labelCls}>
+                                Due date
                             </label>
 
                             <input
                                 type="date"
                                 value={dueDate}
                                 onChange={(e) => setDueDate(e.target.value)}
-                                className="w-full rounded-lg border border-gray-200 px-4 py-2.5
-            text-gray-800 bg-white focus:border-blue-500
-            focus:outline-none focus:ring-4
-            focus:ring-blue-500/10 transition"
+                                className={fieldCls}
                             />
                         </div>
                     )}
@@ -314,14 +334,14 @@ function SaleModal({
 
                         <div>
 
-                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                            <label className={labelCls}>
                                 Customer
                             </label>
 
                             <select
                                 value={customerId}
                                 onChange={(e) => setCustomerId(e.target.value)}
-                                className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 bg-white focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
+                                className={fieldCls}
                             >
 
                                 <option value="">
@@ -347,7 +367,7 @@ function SaleModal({
                     {/* Product */}
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className={labelCls}>
                             Add products
                         </label>
 
@@ -356,7 +376,7 @@ function SaleModal({
                             <select
                                 value={productId}
                                 onChange={(e) => setProductId(e.target.value)}
-                                className="rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 bg-white focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
+                                className={fieldCls}
                             >
 
                                 <option value="">
@@ -383,13 +403,13 @@ function SaleModal({
                                 onChange={(e) =>
                                     setQuantity(Number(e.target.value))
                                 }
-                                className="rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
+                                className={fieldCls}
                             />
 
                             <button
                                 type="button"
                                 onClick={handleAddProduct}
-                                className="flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                                className="flex h-10 items-center justify-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white px-4 rounded-control text-sm font-semibold transition-colors"
                             >
                                 <Plus size={16} />
                                 Add product
@@ -400,123 +420,132 @@ function SaleModal({
 
                     {/* Product List */}
 
-                    <div className="rounded-xl border border-gray-100 overflow-hidden">
+                    <div className="rounded-card border border-surface-line overflow-hidden">
 
-                        <table className="w-full border-collapse">
+                        <div className="overflow-x-auto">
 
-                            <thead>
-                                <tr className="bg-gray-50 border-b border-gray-200">
+                            <table className="w-full border-collapse">
 
-                                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Product
-                                    </th>
+                                <thead>
+                                    <tr className="bg-surface-muted/60 border-b border-surface-line">
 
-                                    <th className="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Qty
-                                    </th>
+                                        <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500">
+                                            Product
+                                        </th>
 
-                                    <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Unit price
-                                    </th>
+                                        <th className="text-center px-4 py-3 text-xs font-semibold text-slate-500">
+                                            Qty
+                                        </th>
 
-                                    <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Subtotal
-                                    </th>
+                                        <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500">
+                                            Unit price
+                                        </th>
 
-                                    <th className="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Action
-                                    </th>
+                                        <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500">
+                                            Subtotal
+                                        </th>
 
-                                </tr>
-                            </thead>
+                                        <th className="text-center px-4 py-3 text-xs font-semibold text-slate-500">
+                                            Action
+                                        </th>
 
-                            <tbody>
-
-                                {items.length === 0 ? (
-
-                                    <tr>
-                                        <td colSpan="5" className="px-4 py-10">
-                                            <div className="flex flex-col items-center justify-center text-center">
-                                                <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mb-2">
-                                                    <ShoppingCart size={18} className="text-gray-400" />
-                                                </div>
-                                                <p className="text-gray-500 text-sm">
-                                                    No products added yet.
-                                                </p>
-                                            </div>
-                                        </td>
                                     </tr>
+                                </thead>
 
-                                ) : (
+                                <tbody>
 
-                                    items.map((item, index) => (
+                                    {items.length === 0 ? (
 
-                                        <tr
-                                            key={index}
-                                            className={
-                                                index !== items.length - 1
-                                                    ? "border-b border-gray-100"
-                                                    : ""
-                                            }
-                                        >
-
-                                            <td className="px-4 py-3 font-medium text-gray-900">
-                                                {item.name}
-                                            </td>
-
-                                            <td className="px-4 py-3 text-center text-gray-600">
-                                                {item.quantity}
-                                            </td>
-
-                                            <td className="px-4 py-3 text-right text-gray-600 tabular-nums">
-                                                {peso(item.unitPrice)}
-                                            </td>
-
-                                            <td className="px-4 py-3 text-right text-gray-900 font-medium tabular-nums">
-                                                {peso(item.subtotal)}
-                                            </td>
-
-                                            <td className="px-4 py-3">
-                                                <div className="flex justify-center">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeItem(index)}
-                                                        title="Remove product"
-                                                        aria-label={`Remove ${item.name}`}
-                                                        className="p-2 rounded-lg text-red-600 hover:bg-red-100 hover:text-red-700 transition-colors"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
+                                        <tr>
+                                            <td colSpan="5" className="px-4 py-10">
+                                                <div className="flex flex-col items-center justify-center text-center">
+                                                    <div className="w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center mb-2">
+                                                        <ShoppingCart size={18} className="text-brand-600" />
+                                                    </div>
+                                                    <p className="text-slate-500 text-sm">
+                                                        No products added yet.
+                                                    </p>
                                                 </div>
                                             </td>
-
                                         </tr>
 
-                                    ))
+                                    ) : (
 
-                                )}
+                                        items.map((item, index) => (
 
-                            </tbody>
+                                            <tr
+                                                key={index}
+                                                className={
+                                                    index !== items.length - 1
+                                                        ? "border-b border-surface-line"
+                                                        : ""
+                                                }
+                                            >
 
-                        </table>
+                                                <td className="px-4 py-3 font-semibold text-slate-900">
+                                                    {item.name}
+                                                </td>
+
+                                                <td className="px-4 py-3 text-center text-slate-600 tabular-nums">
+                                                    {item.quantity}
+                                                </td>
+
+                                                <td className="px-4 py-3 text-right text-slate-600 tabular-nums">
+                                                    {peso(item.unitPrice)}
+                                                </td>
+
+                                                <td className="px-4 py-3 text-right text-slate-900 font-semibold tabular-nums">
+                                                    {peso(item.subtotal)}
+                                                </td>
+
+                                                <td className="px-4 py-3">
+                                                    <div className="flex justify-center">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeItem(index)}
+                                                            title="Remove product"
+                                                            aria-label={`Remove ${item.name}`}
+                                                            className="p-2 rounded-control text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+
+                                        ))
+
+                                    )}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
 
                     </div>
 
                 </form>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between gap-4 px-8 py-5 border-t border-gray-100 bg-gray-50/50 shrink-0">
+                <div className="flex flex-wrap items-center justify-between gap-4 px-8 py-5 border-t border-surface-line bg-surface-muted/50 shrink-0">
 
-                    <h3 className="text-lg font-bold text-gray-900">
-                        Total: {peso(total)}
-                    </h3>
+                    <div>
+                        <p className="text-xs font-medium text-slate-500">
+                            Total
+                        </p>
+                        <p className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
+                            {peso(total)}
+                        </p>
+                    </div>
 
                     <div className="flex gap-3">
 
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 font-medium text-sm transition-colors"
+                            className="px-5 py-2.5 rounded-control border border-surface-line bg-white text-slate-700 hover:bg-surface-muted font-medium text-sm transition-colors"
                         >
                             Cancel
                         </button>
@@ -524,11 +553,11 @@ function SaleModal({
                         <button
                             type="submit"
                             form="sale-form"
-                            className="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md shadow-blue-500/20 transition-colors"
+                            className="px-6 py-2.5 rounded-control bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition-colors"
                         >
                             {paymentType === "credit"
-                                ? "Save Credit Sale"
-                                : "Save Cash Sale"}
+                                ? "Save credit sale"
+                                : "Save cash sale"}
                         </button>
 
                     </div>

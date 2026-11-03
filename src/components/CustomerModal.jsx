@@ -12,6 +12,10 @@ function buildInitialForm(customer) {
     };
 }
 
+const labelCls = "block text-sm font-medium text-slate-700 mb-1.5";
+const fieldCls =
+    "w-full h-10 rounded-control border border-surface-line bg-white px-3 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10";
+
 function CustomerModal({ isOpen, onClose, onSave, customer }) {
     // Lazy initializer reads `customer` once, on mount, instead of an
     // effect that copies it into state on every change.
@@ -72,26 +76,34 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-            <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl bg-white shadow-2xl border border-gray-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/50 backdrop-blur-[2px]">
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="customer-modal-title"
+                className="relative w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden rounded-card bg-white shadow-pop border border-surface-line"
+            >
 
                 {/* Modal Header */}
-                <div className="flex items-center justify-between border-b border-gray-100 px-8 py-5 shrink-0">
+                <div className="flex items-center justify-between border-b border-surface-line px-8 py-5 shrink-0">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900">
+                        <h2
+                            id="customer-modal-title"
+                            className="text-xl font-bold tracking-tight text-slate-900"
+                        >
                             {customer ? "Edit customer" : "Add customer"}
                         </h2>
-                        <p className="text-sm text-gray-500 mt-0.5">
+                        <p className="text-sm text-slate-500 mt-0.5">
                             Enter customer details and upload a valid government-issued ID.
                         </p>
                     </div>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                        className="p-1.5 -mr-2 rounded-control text-slate-400 hover:bg-surface-muted hover:text-slate-700 transition-colors"
                         aria-label="Close modal"
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
                 </div>
 
@@ -104,13 +116,13 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
 
                     {/* Section 1: Personal Details */}
                     <div className="space-y-4">
-                        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                        <h3 className="text-sm font-semibold text-slate-900">
                             Personal information
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                <label className={labelCls}>
                                     Full name <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -123,13 +135,13 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                     }}
                                     placeholder="e.g. Juan Dela Cruz"
                                     maxLength={100}
-                                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
+                                    className={fieldCls}
                                     required
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                <label className={labelCls}>
                                     Contact number <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -142,14 +154,14 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                     }}
                                     placeholder="09XXXXXXXXX"
                                     maxLength={11}
-                                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
+                                    className={`${fieldCls} tabular-nums`}
                                     required
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                            <label className={labelCls}>
                                 Address <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -159,30 +171,30 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                 onChange={handleChange}
                                 placeholder="Enter complete address"
                                 maxLength={255}
-                                className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
+                                className={fieldCls}
                                 required
                             />
                         </div>
                     </div>
 
-                    <hr className="border-gray-100" />
+                    <hr className="border-surface-line" />
 
                     {/* Section 2: ID Information & Upload */}
                     <div className="space-y-4">
-                        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                        <h3 className="text-sm font-semibold text-slate-900">
                             Identification and verification
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                <label className={labelCls}>
                                     ID type <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     name="idType"
                                     value={form.idType}
                                     onChange={handleChange}
-                                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition bg-white"
+                                    className={fieldCls}
                                     required
                                 >
                                     <option value="">Select valid ID</option>
@@ -201,7 +213,7 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                <label className={labelCls}>
                                     ID number
                                 </label>
                                 <input
@@ -210,19 +222,19 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                     value={form.idNumber}
                                     onChange={handleChange}
                                     placeholder="Enter ID number"
-                                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"
+                                    className={fieldCls}
                                 />
                             </div>
                         </div>
 
                         {/* Upload Area */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                            <label className={labelCls}>
                                 Upload valid ID
                             </label>
 
                             {!form.idImage ? (
-                                <div className="relative border-2 border-dashed border-gray-200 rounded-xl p-6 bg-gray-50/50 hover:border-blue-400 hover:bg-blue-50/30 transition-colors text-center group cursor-pointer">
+                                <div className="relative border-2 border-dashed border-surface-line rounded-card p-6 bg-surface-muted/50 hover:border-brand-500 hover:bg-brand-50/40 transition-colors text-center group cursor-pointer">
                                     <input
                                         id="upload-id"
                                         type="file"
@@ -232,7 +244,7 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                         disabled={uploading}
                                     />
                                     <div className="flex flex-col items-center justify-center pointer-events-none">
-                                        <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                        <div className="w-12 h-12 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                                             {uploading ? (
                                                 <Loader2 size={22} className="animate-spin" />
                                             ) : (
@@ -240,34 +252,34 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                             )}
                                         </div>
 
-                                        <p className="font-semibold text-gray-700 text-sm">
+                                        <p className="font-semibold text-slate-700 text-sm">
                                             {uploading ? "Uploading ID..." : "Click or drag file to upload"}
                                         </p>
-                                        <p className="text-xs text-gray-400 mt-1">
+                                        <p className="text-xs text-slate-500 mt-1">
                                             JPG, JPEG, or PNG (max size 5MB)
                                         </p>
                                     </div>
                                 </div>
                             ) : (
                                 /* Uploaded Preview Card */
-                                <div className="relative border border-gray-200 rounded-xl p-4 bg-gray-50 flex items-center gap-4">
+                                <div className="relative border border-surface-line rounded-card p-4 bg-surface-muted/50 flex items-center gap-4">
                                     <img
                                         src={form.idImage}
                                         alt="Customer ID"
-                                        className="w-20 h-20 object-cover rounded-lg border border-gray-200 shadow-sm shrink-0"
+                                        className="w-20 h-20 object-cover rounded-control border border-surface-line shadow-card shrink-0"
                                     />
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1.5 text-emerald-600 font-medium text-sm">
+                                        <div className="flex items-center gap-1.5 text-emerald-600 font-semibold text-sm">
                                             <CheckCircle2 size={16} />
                                             Upload successful
                                         </div>
-                                        <p className="text-xs text-gray-500 mt-0.5 truncate">
+                                        <p className="text-xs text-slate-500 mt-0.5 truncate">
                                             Valid ID image attached.
                                         </p>
                                         <div className="mt-2.5 flex items-center gap-4">
                                             <label
                                                 htmlFor="upload-id-change"
-                                                className="text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
+                                                className="text-xs font-semibold text-brand-600 hover:text-brand-700 cursor-pointer"
                                             >
                                                 Change image
                                             </label>
@@ -294,11 +306,11 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                 </form>
 
                 {/* Action Buttons - pinned to the bottom so they're always reachable */}
-                <div className="flex items-center justify-end gap-3 px-8 py-5 border-t border-gray-100 bg-gray-50/50 shrink-0">
+                <div className="flex items-center justify-end gap-3 px-8 py-5 border-t border-surface-line bg-surface-muted/50 shrink-0">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 font-medium text-sm transition-colors"
+                        className="px-5 py-2.5 rounded-control border border-surface-line bg-white text-slate-700 hover:bg-surface-muted font-medium text-sm transition-colors"
                     >
                         Cancel
                     </button>
@@ -306,7 +318,7 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                         type="submit"
                         form="customer-form"
                         disabled={uploading}
-                        className="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none text-white font-semibold text-sm shadow-md shadow-blue-500/20 transition-colors"
+                        className="px-6 py-2.5 rounded-control bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:pointer-events-none text-white font-semibold text-sm transition-colors"
                     >
                         {customer ? "Update customer" : "Save customer"}
                     </button>

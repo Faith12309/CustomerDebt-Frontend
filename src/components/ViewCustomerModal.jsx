@@ -9,13 +9,13 @@ const getInitials = (name = "") => {
 
 function DetailRow({ icon: Icon, label, value }) {
     return (
-        <div className="flex items-start gap-3 py-3 border-b border-gray-50 last:border-0">
-            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
-                <Icon size={15} className="text-gray-500" />
+        <div className="flex items-start gap-3 py-3 border-b border-surface-line last:border-0">
+            <div className="w-9 h-9 rounded-control bg-brand-50 flex items-center justify-center shrink-0 mt-0.5">
+                <Icon size={16} className="text-brand-600" />
             </div>
             <div className="min-w-0">
-                <p className="text-xs text-gray-400">{label}</p>
-                <p className="text-sm font-medium text-gray-900 mt-0.5 break-words">
+                <p className="text-xs text-slate-500">{label}</p>
+                <p className="text-sm font-semibold text-slate-900 mt-0.5 break-words">
                     {value || "\u2014"}
                 </p>
             </div>
@@ -27,20 +27,28 @@ const ViewCustomerModal = ({ isOpen, onClose, customer }) => {
     if (!isOpen || !customer) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-            <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden rounded-2xl bg-white shadow-2xl border border-gray-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/50 backdrop-blur-[2px]">
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="view-customer-title"
+                className="relative w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden rounded-card bg-white shadow-pop border border-surface-line"
+            >
 
                 {/* Header */}
-                <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5 shrink-0">
+                <div className="flex items-center justify-between border-b border-surface-line px-6 py-5 shrink-0">
                     <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center text-sm font-semibold shrink-0">
+                        <div className="w-11 h-11 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-bold shrink-0">
                             {getInitials(customer.fullName)}
                         </div>
                         <div className="min-w-0">
-                            <h2 className="text-lg font-bold text-gray-900 truncate">
+                            <h2
+                                id="view-customer-title"
+                                className="text-lg font-bold tracking-tight text-slate-900 truncate"
+                            >
                                 {customer.fullName}
                             </h2>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-slate-500">
                                 Customer details
                             </p>
                         </div>
@@ -50,9 +58,9 @@ const ViewCustomerModal = ({ isOpen, onClose, customer }) => {
                         type="button"
                         onClick={onClose}
                         aria-label="Close modal"
-                        className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors shrink-0"
+                        className="p-1.5 -mr-1.5 rounded-control text-slate-400 hover:bg-surface-muted hover:text-slate-700 transition-colors shrink-0"
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
                 </div>
 
@@ -84,7 +92,7 @@ const ViewCustomerModal = ({ isOpen, onClose, customer }) => {
 
                     {/* Valid ID */}
                     <div className="mt-5">
-                        <p className="text-xs text-gray-400 mb-2">
+                        <p className="text-xs text-slate-500 mb-2">
                             Valid ID
                         </p>
 
@@ -92,12 +100,12 @@ const ViewCustomerModal = ({ isOpen, onClose, customer }) => {
                             <img
                                 src={customer.idImage}
                                 alt="Customer valid ID"
-                                className="w-full max-w-xs rounded-xl border border-gray-200 shadow-sm"
+                                className="w-full max-w-xs rounded-card border border-surface-line shadow-card"
                             />
                         ) : (
-                            <div className="flex flex-col items-center justify-center gap-2 border border-dashed border-gray-200 rounded-xl py-8 text-center bg-gray-50/50">
-                                <ImageOff size={20} className="text-gray-300" />
-                                <p className="text-sm text-gray-400">
+                            <div className="flex flex-col items-center justify-center gap-2 border border-dashed border-surface-line rounded-card py-8 text-center bg-surface-muted/50">
+                                <ImageOff size={20} className="text-slate-300" />
+                                <p className="text-sm text-slate-500">
                                     No ID image on file.
                                 </p>
                             </div>
@@ -106,10 +114,10 @@ const ViewCustomerModal = ({ isOpen, onClose, customer }) => {
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-end px-6 py-4 border-t border-gray-100 bg-gray-50/50 shrink-0">
+                <div className="flex justify-end px-6 py-4 border-t border-surface-line bg-surface-muted/50 shrink-0">
                     <button
                         onClick={onClose}
-                        className="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors"
+                        className="px-5 py-2.5 rounded-control bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition-colors"
                     >
                         Close
                     </button>
