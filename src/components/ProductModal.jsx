@@ -2,6 +2,24 @@ import { useState } from "react";
 import { X, Package } from "lucide-react";
 import { createProduct, getProducts } from "../services/productService";
 
+const CATEGORY_OPTIONS = [
+    "Beverages",
+    "Snacks",
+    "Personal Care",
+    "Household",
+    "Others",
+];
+
+const UNIT_OPTIONS = [
+    "piece",
+    "sachet",
+    "pack",
+    "can",
+    "bottle",
+    "kg",
+    "box",
+];
+
 const ProductModal = ({ isOpen, onClose }) => {
     const [form, setForm] = useState({
         name: "",
@@ -19,10 +37,19 @@ const ProductModal = ({ isOpen, onClose }) => {
             return;
         }
 
+        if (!form.category) {
+            alert("Please select a category.");
+            return;
+        }
+
+        if (!form.unit) {
+            alert("Please select a unit.");
+            return;
+        }
+
         try {
             const existing = await getProducts();
 
-            // Normalize: lowercase + remove all spaces
             const normalize = (str) =>
                 str.trim().toLowerCase().replace(/\s+/g, "");
 
@@ -37,13 +64,14 @@ const ProductModal = ({ isOpen, onClose }) => {
 
             await createProduct({
                 name: form.name.trim(),
-                category: form.category.trim(),
-                unit: form.unit.trim().toLowerCase(),
+                category: form.category,
+                unit: form.unit,
                 price: Number(form.price),
                 stock: Number(form.stock),
             });
 
             alert("Product added successfully!");
+            setForm({ name: "", category: "", unit: "", price: "", stock: "" });
             onClose();
             window.location.reload();
         } catch (error) {
@@ -113,11 +141,9 @@ const ProductModal = ({ isOpen, onClose }) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className={labelCls}>
-                                Category
+                                Category <span className="text-red-500">*</span>
                             </label>
-                            <input
-                                type="text"
-                                placeholder="e.g. Beverages"
+                            <select
                                 className={inputClass}
                                 value={form.category}
                                 onChange={(e) =>
@@ -126,22 +152,34 @@ const ProductModal = ({ isOpen, onClose }) => {
                                         category: e.target.value,
                                     })
                                 }
-                            />
+                            >
+                                <option value="">Select category</option>
+                                {CATEGORY_OPTIONS.map((cat) => (
+                                    <option key={cat} value={cat}>
+                                        {cat}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div>
                             <label className={labelCls}>
-                                Unit
+                                Unit <span className="text-red-500">*</span>
                             </label>
-                            <input
-                                type="text"
-                                placeholder="e.g. sachet, kg, can"
+                            <select
                                 className={inputClass}
                                 value={form.unit}
                                 onChange={(e) =>
                                     setForm({ ...form, unit: e.target.value })
                                 }
-                            />
+                            >
+                                <option value="">Select unit</option>
+                                {UNIT_OPTIONS.map((unit) => (
+                                    <option key={unit} value={unit}>
+                                        {unit}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
@@ -152,7 +190,7 @@ const ProductModal = ({ isOpen, onClose }) => {
                             </label>
                             <div className="relative">
                                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400">
-                                    ?
+                                    ₱
                                 </span>
                                 <input
                                     type="number"

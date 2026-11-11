@@ -2,53 +2,83 @@
 import { X, Pencil } from "lucide-react";
 import { updateProduct } from "../services/productService";
 
+const CATEGORY_OPTIONS = [
+    "Beverages",
+    "Snacks",
+    "Personal Care",
+    "Household",
+    "Others",
+];
+
+const UNIT_OPTIONS = [
+    "piece",
+    "sachet",
+    "pack",
+    "can",
+    "bottle",
+    "kg",
+    "box",
+];
+
 const labelCls = "block text-sm font-medium text-slate-700 mb-1.5";
 const fieldCls =
     "w-full h-10 rounded-control border border-surface-line bg-white px-3 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10";
 
 const EditProductModal = ({ isOpen, onClose, product }) => {
-
     const [form, setForm] = useState({
         name: "",
         category: "",
         unit: "",
-        price: ""
+        price: "",
     });
 
     useEffect(() => {
         if (product) {
             setForm({
-                name: product.name,
-                category: product.category,
-                unit: product.unit,
-                price: product.price
+                name: product.name || "",
+                category: product.category || "",
+                unit: product.unit || "",
+                price: product.price ?? "",
             });
         }
     }, [product]);
 
     const handleSave = async () => {
-        try {
+        if (!form.name.trim()) {
+            alert("Product name is required.");
+            return;
+        }
 
+        if (!form.category) {
+            alert("Please select a category.");
+            return;
+        }
+
+        if (!form.unit) {
+            alert("Please select a unit.");
+            return;
+        }
+
+        if (form.price === "" || Number(form.price) < 0) {
+            alert("Please enter a valid price.");
+            return;
+        }
+
+        try {
             await updateProduct(product.id, {
-                name: form.name,
+                name: form.name.trim(),
                 category: form.category,
                 unit: form.unit,
                 price: Number(form.price),
-                stock: product.stock
+                stock: product.stock,
             });
 
             alert("Product updated successfully!");
-
             onClose();
-
             window.location.reload();
-
         } catch (error) {
-
             console.error(error);
-
             alert("Failed to update product.");
-
         }
     };
 
@@ -56,14 +86,12 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
 
     return (
         <div className="fixed inset-0 bg-ink-950/50 backdrop-blur-[2px] flex items-center justify-center p-4 z-50">
-
             <div
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="edit-product-title"
                 className="bg-white w-full max-w-lg rounded-card shadow-pop border border-surface-line overflow-hidden"
             >
-
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-surface-line px-6 py-5">
                     <div className="flex items-center gap-3">
@@ -94,18 +122,15 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
                 </div>
 
                 <div className="px-6 py-6 space-y-4">
-
                     <div>
-                        <label className={labelCls}>
-                            Product name
-                        </label>
+                        <label className={labelCls}>Product name</label>
                         <input
                             type="text"
                             value={form.name}
                             onChange={(e) =>
                                 setForm({
                                     ...form,
-                                    name: e.target.value
+                                    name: e.target.value,
                                 })
                             }
                             className={fieldCls}
@@ -113,69 +138,77 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-
                         <div>
                             <label className={labelCls}>
-                                Category
+                                Category <span className="text-red-500">*</span>
                             </label>
-                            <input
-                                type="text"
+                            <select
+                                className={fieldCls}
                                 value={form.category}
                                 onChange={(e) =>
                                     setForm({
                                         ...form,
-                                        category: e.target.value
+                                        category: e.target.value,
                                     })
                                 }
-                                className={fieldCls}
-                            />
+                            >
+                                <option value="">Select category</option>
+                                {CATEGORY_OPTIONS.map((cat) => (
+                                    <option key={cat} value={cat}>
+                                        {cat}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div>
                             <label className={labelCls}>
-                                Unit
+                                Unit <span className="text-red-500">*</span>
                             </label>
-                            <input
-                                type="text"
+                            <select
+                                className={fieldCls}
                                 value={form.unit}
                                 onChange={(e) =>
                                     setForm({
                                         ...form,
-                                        unit: e.target.value
+                                        unit: e.target.value,
                                     })
                                 }
-                                className={fieldCls}
-                            />
+                            >
+                                <option value="">Select unit</option>
+                                {UNIT_OPTIONS.map((unit) => (
+                                    <option key={unit} value={unit}>
+                                        {unit}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
-
                     </div>
 
                     <div>
-                        <label className={labelCls}>
-                            Price
-                        </label>
+                        <label className={labelCls}>Price</label>
                         <div className="relative">
                             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400">
                                 ₱
                             </span>
                             <input
                                 type="number"
+                                min="0"
+                                step="0.01"
                                 value={form.price}
                                 onChange={(e) =>
                                     setForm({
                                         ...form,
-                                        price: e.target.value
+                                        price: e.target.value,
                                     })
                                 }
                                 className={`${fieldCls} pl-8 tabular-nums`}
                             />
                         </div>
                     </div>
-
                 </div>
 
                 <div className="flex justify-end gap-3 px-6 py-5 border-t border-surface-line bg-surface-muted/50">
-
                     <button
                         onClick={onClose}
                         className="px-5 py-2.5 rounded-control border border-surface-line bg-white text-slate-700 hover:bg-surface-muted font-medium text-sm transition-colors"
@@ -189,11 +222,8 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
                     >
                         Save changes
                     </button>
-
                 </div>
-
             </div>
-
         </div>
     );
 };

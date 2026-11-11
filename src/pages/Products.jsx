@@ -11,6 +11,7 @@ import RestockModal from "../components/RestockModal";
 import EditProductModal from "../components/EditProductModal";
 import DeleteProductModal from "../components/DeleteProductModal";
 
+
 const LOW_STOCK_THRESHOLD = 20;
 
 const peso = (value) =>
@@ -21,6 +22,7 @@ const peso = (value) =>
 
 const Products = () => {
 
+    const role = localStorage.getItem("role");
     const [products, setProducts] = useState([]);
     const [search, setSearch] = useState("");
 
@@ -207,43 +209,38 @@ const Products = () => {
 
                                             <td className="px-6 py-4">
                                                 <div className="flex justify-center gap-1">
-
                                                     <button
                                                         onClick={() => {
                                                             setSelectedProduct(p);
                                                             setShowEditModal(true);
                                                         }}
                                                         title="Edit product"
-                                                        aria-label={`Edit ${p.name}`}
                                                         className="p-2 rounded-control text-slate-400 hover:bg-brand-50 hover:text-brand-600 transition-colors"
                                                     >
                                                         <Pencil size={16} />
                                                     </button>
-
                                                     <button
                                                         onClick={() => {
                                                             setSelectedProduct(p);
                                                             setShowRestockModal(true);
                                                         }}
                                                         title="Restock product"
-                                                        aria-label={`Restock ${p.name}`}
                                                         className="p-2 rounded-control text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
                                                     >
                                                         <PackagePlus size={16} />
                                                     </button>
-
-                                                    <button
-                                                        onClick={() => {
-                                                            setSelectedProduct(p);
-                                                            setShowDeleteModal(true);
-                                                        }}
-                                                        title="Delete product"
-                                                        aria-label={`Delete ${p.name}`}
-                                                        className="p-2 rounded-control text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
-
+                                                    {role === "Admin" && (
+                                                        <button
+                                                            onClick={() => {
+                                                                setSelectedProduct(p);
+                                                                setShowDeleteModal(true);
+                                                            }}
+                                                            title="Delete product"
+                                                            className="p-2 rounded-lg text-red-600 hover:bg-red-100 hover:text-red-700 transition-colors"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </td>
 

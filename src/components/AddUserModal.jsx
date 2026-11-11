@@ -30,9 +30,28 @@ const AddUserModal = ({ isOpen, onClose, onSaved }) => {
             if (onSaved) onSaved();
         } catch (error) {
             console.error(error);
-            const msg =
-                error.response?.data || "Failed to create user.";
-            alert(typeof msg === "string" ? msg : "Failed to create user.");
+
+            // Better error extraction
+            let msg = "Failed to create user.";
+
+            if (error.response?.data) {
+                const data = error.response.data;
+
+                if (typeof data === "string") {
+                    msg = data;
+                } else if (data.title) {
+                    msg = data.title;
+                } else if (data.message) {
+                    msg = data.message;
+                } else if (typeof data === "object") {
+                    const values = Object.values(data);
+                    if (values.length > 0 && Array.isArray(values[0])) {
+                        msg = values[0][0];
+                    }
+                }
+            }
+
+            alert(msg);
         }
     };
 
@@ -97,7 +116,7 @@ const AddUserModal = ({ isOpen, onClose, onSaved }) => {
                         <input
                             type="password"
                             className={inputClass}
-                            placeholder="Enter password"
+                            placeholder="Min 8 chars, uppercase, number, special"
                             value={form.password}
                             onChange={(e) =>
                                 setForm({ ...form, password: e.target.value })
@@ -106,9 +125,7 @@ const AddUserModal = ({ isOpen, onClose, onSaved }) => {
                     </div>
 
                     <div>
-                        <label className={labelCls}>
-                            Role
-                        </label>
+                        <label className={labelCls}>Role</label>
                         <select
                             className={inputClass}
                             value={form.role}
