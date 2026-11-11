@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { X, UploadCloud, Loader2, CheckCircle2 } from "lucide-react";
+import { X, UploadCloud, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+
+const ALLOWED_TYPES = ["image/jpeg", "image/png"];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 function buildInitialForm(customer) {
     return {
@@ -17,12 +20,13 @@ const fieldCls =
     "w-full h-10 rounded-control border border-surface-line bg-white px-3 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10";
 
 function CustomerModal({ isOpen, onClose, onSave, customer }) {
-    // Lazy initializer reads `customer` once, on mount, instead of an
-    // effect that copies it into state on every change.
     const [form, setForm] = useState(() => buildInitialForm(customer));
     const [uploading, setUploading] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
 
     const handleChange = (e) => {
+        setError("");
         setForm((prev) => ({
             ...prev,
             [e.target.name]: e.target.value,
@@ -31,10 +35,23 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
+        e.target.value = ""; // para ma-select balik ang samang file kung kinahanglan
         if (!file) return;
 
+        if (!ALLOWED_TYPES.includes(file.type)) {
+            setError("Only JPG, JPEG, or PNG images are allowed.");
+            return;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+            setError("Image is too large. Maximum size is 5MB.");
+            return;
+        }
+
         try {
+            setError("");
             setUploading(true);
+
             const token = localStorage.getItem("token");
             const formData = new FormData();
             formData.append("file", file);
@@ -58,7 +75,7 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                 idImage: data.imageUrl,
             }));
         } catch {
-            alert("Upload failed. Please try again.");
+            setError("Image upload failed. Please try again.");
         } finally {
             setUploading(false);
         }
@@ -68,46 +85,34 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
         setForm((prev) => ({ ...prev, idImage: "" }));
     };
 
-const handleSubmit = (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (saving) return;
+        setError("");
 
-    if (!form.fullName.trim()) {
-        alert("Please enter the full name.");
-        return;
-    }
+        if (!form.fullName.trim()) return setError("Please enter the full name.");
+        if (form.contactNumber.length !== 11)
+            return setError("Contact number must be 11 digits.");
+        if (!form.address.trim()) return setError("Please enter the address.");
+        if (!form.idType) return setError("Please select an ID type.");
+        if (!form.idNumber.trim()) return setError("Please enter the ID number.");
+        if (uploading)
+            return setError("Please wait for the image upload to finish.");
+        if (!form.idImage) return setError("Please upload a valid ID image.");
 
-    if (form.contactNumber.length !== 11) {
-        alert("Contact number must be 11 digits.");
-        return;
-    }
-
-    if (!form.address.trim()) {
-        alert("Please enter the address.");
-        return;
-    }
-
-    if (!form.idType) {
-        alert("Please select an ID type.");
-        return;
-    }
-
-    if (!form.idNumber.trim()) {
-        alert("Please enter the ID number.");
-        return;
-    }
-
-    if (!form.idImage) {
-        alert("Please upload a valid ID image.");
-        return;
-    }
-
-    if (uploading) {
-        alert("Please wait for the image upload to finish.");
-        return;
-    }
-
-    onSave(form);
-};
+        setSaving(true);
+        try {
+            const result = await onSave(form);
+            if (result?.error) {
+                setError(result.error);
+                setSaving(false);
+            }
+            // kung success, ang parent mo-close sa modal
+        } catch {
+            setError("Unable to save customer. Please try again.");
+            setSaving(false);
+        }
+    };
 
     if (!isOpen) return null;
 
@@ -119,7 +124,6 @@ const handleSubmit = (e) => {
                 aria-labelledby="customer-modal-title"
                 className="relative w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden rounded-card bg-white shadow-pop border border-surface-line"
             >
-
                 {/* Modal Header */}
                 <div className="flex items-center justify-between border-b border-surface-line px-8 py-5 shrink-0">
                     <div>
@@ -147,9 +151,9 @@ const handleSubmit = (e) => {
                 <form
                     id="customer-form"
                     onSubmit={handleSubmit}
+                    noValidate
                     className="px-8 py-6 space-y-6 overflow-y-auto"
                 >
-
                     {/* Section 1: Personal Details */}
                     <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-slate-900">
@@ -166,13 +170,12 @@ const handleSubmit = (e) => {
                                     name="fullName"
                                     value={form.fullName}
                                     onChange={(e) => {
-                                        const filtered = e.target.value.replace(/[^A-Za-z\u00D1\u00F1.'\- ]/g, '');
+                                        const filtered = e.target.value.replace(/[^A-Za-z\u00D1\u00F1.'\- ]/g, "");
                                         handleChange({ target: { name: "fullName", value: filtered } });
                                     }}
                                     placeholder="e.g. Juan Dela Cruz"
                                     maxLength={100}
                                     className={fieldCls}
-                                    required
                                 />
                             </div>
 
@@ -185,13 +188,12 @@ const handleSubmit = (e) => {
                                     name="contactNumber"
                                     value={form.contactNumber}
                                     onChange={(e) => {
-                                        const filtered = e.target.value.replace(/[^0-9]/g, '');
+                                        const filtered = e.target.value.replace(/[^0-9]/g, "");
                                         handleChange({ target: { name: "contactNumber", value: filtered } });
                                     }}
                                     placeholder="09XXXXXXXXX"
                                     maxLength={11}
                                     className={`${fieldCls} tabular-nums`}
-                                    required
                                 />
                             </div>
                         </div>
@@ -208,7 +210,6 @@ const handleSubmit = (e) => {
                                 placeholder="Enter complete address"
                                 maxLength={255}
                                 className={fieldCls}
-                                required
                             />
                         </div>
                     </div>
@@ -231,7 +232,6 @@ const handleSubmit = (e) => {
                                     value={form.idType}
                                     onChange={handleChange}
                                     className={fieldCls}
-                                    required
                                 >
                                     <option value="">Select valid ID</option>
                                     <option value="PhilSys National ID">PhilSys National ID</option>
@@ -248,7 +248,7 @@ const handleSubmit = (e) => {
                                 </select>
                             </div>
 
-                           <div>
+                            <div>
                                 <label className={labelCls}>
                                     ID number <span className="text-red-500">*</span>
                                 </label>
@@ -259,23 +259,22 @@ const handleSubmit = (e) => {
                                     onChange={handleChange}
                                     placeholder="Enter ID number"
                                     className={fieldCls}
-                                    required
                                 />
                             </div>
                         </div>
 
                         {/* Upload Area */}
                         <div>
-                                <label className={labelCls}>
-                                    Upload valid ID <span className="text-red-500">*</span>
-                                </label>
+                            <label className={labelCls}>
+                                Upload valid ID <span className="text-red-500">*</span>
+                            </label>
 
                             {!form.idImage ? (
                                 <div className="relative border-2 border-dashed border-surface-line rounded-card p-6 bg-surface-muted/50 hover:border-brand-500 hover:bg-brand-50/40 transition-colors text-center group cursor-pointer">
                                     <input
                                         id="upload-id"
                                         type="file"
-                                        accept="image/*"
+                                        accept="image/jpeg,image/png"
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                         onChange={handleFileChange}
                                         disabled={uploading}
@@ -323,7 +322,7 @@ const handleSubmit = (e) => {
                                             <input
                                                 id="upload-id-change"
                                                 type="file"
-                                                accept="image/*"
+                                                accept="image/jpeg,image/png"
                                                 className="hidden"
                                                 onChange={handleFileChange}
                                             />
@@ -342,7 +341,18 @@ const handleSubmit = (e) => {
                     </div>
                 </form>
 
-                {/* Action Buttons - pinned to the bottom so they're always reachable */}
+                {/* Error message - naa sa gawas sa scroll area para kanunay makita */}
+                {error && (
+                    <div
+                        role="alert"
+                        className="mx-8 mb-4 flex items-start gap-2 rounded-control border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shrink-0"
+                    >
+                        <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                        <span>{error}</span>
+                    </div>
+                )}
+
+                {/* Action Buttons */}
                 <div className="flex items-center justify-end gap-3 px-8 py-5 border-t border-surface-line bg-surface-muted/50 shrink-0">
                     <button
                         type="button"
@@ -354,13 +364,13 @@ const handleSubmit = (e) => {
                     <button
                         type="submit"
                         form="customer-form"
-                        disabled={uploading}
-                        className="px-6 py-2.5 rounded-control bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:pointer-events-none text-white font-semibold text-sm transition-colors"
+                        disabled={uploading || saving}
+                        className="px-6 py-2.5 rounded-control bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:pointer-events-none text-white font-semibold text-sm transition-colors inline-flex items-center gap-2"
                     >
+                        {saving && <Loader2 size={16} className="animate-spin" />}
                         {customer ? "Update customer" : "Save customer"}
                     </button>
                 </div>
-
             </div>
         </div>
     );

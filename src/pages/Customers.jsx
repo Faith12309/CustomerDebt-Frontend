@@ -16,6 +16,21 @@ import {
 
 const normalize = (s) => (s || "").trim().toLowerCase().replace(/\s+/g, " ");
 
+// Kuhaon ang message gikan sa backend (axios o fetch), kung naa
+function getErrorMessage(error) {
+    const data = error?.response?.data;
+
+    if (typeof data === "string" && data) return data;
+    if (data?.message) return data.message;
+
+    if (data?.errors) {
+        const first = Object.values(data.errors).flat()[0];
+        if (first) return first;
+    }
+
+    return "Unable to save customer. Please try again.";
+}
+
 function Customers() {
     const [customers, setCustomers] = useState([]);
     const [search, setSearch] = useState("");
@@ -49,10 +64,10 @@ function Customers() {
         }
     }
 
+    // Mo-return ug { error } kung naay problema, o {} kung success.
     async function handleSave(customer) {
         try {
-            // Kuhaon ang FULL list (dili ang filtered nga search result)
-            // para sigurado nga tinuod ang duplicate check.
+            // Full list gikan sa server (dili ang filtered nga search result)
             const allCustomers = await getCustomers();
 
             const duplicate = allCustomers.some(
@@ -62,13 +77,11 @@ function Customers() {
             );
 
             if (duplicate) {
-                alert("Naa nay customer nga ingon ani ang pangalan.");
-                return;
+                return { error: "A customer with this name already exists." };
             }
 
             if (!customer.idImage) {
-                alert("Valid ID image is required.");
-                return;
+                return { error: "Valid ID image is required." };
             }
 
             const payload = {
@@ -87,12 +100,10 @@ function Customers() {
             await loadCustomers();
             setIsModalOpen(false);
             setSelectedCustomer(null);
+            return {};
         } catch (error) {
             console.error(error);
-            alert(
-                error?.response?.data?.message ||
-                    "Unable to save customer."
-            );
+            return { error: getErrorMessage(error) };
         }
     }
 
@@ -159,7 +170,7 @@ function Customers() {
             />
 
             {/* Conditional render: mo-mount ug bag-o ang form matag open,
-                so mo-reset ang form ug husto ang data sa edit. */}
+                so mo-reset ang form ug husto ang data sa Edit. */}
             {isModalOpen && (
                 <CustomerModal
                     isOpen={isModalOpen}
