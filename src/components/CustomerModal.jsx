@@ -68,10 +68,46 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
         setForm((prev) => ({ ...prev, idImage: "" }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSave(form);
-    };
+const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!form.fullName.trim()) {
+        alert("Please enter the full name.");
+        return;
+    }
+
+    if (form.contactNumber.length !== 11) {
+        alert("Contact number must be 11 digits.");
+        return;
+    }
+
+    if (!form.address.trim()) {
+        alert("Please enter the address.");
+        return;
+    }
+
+    if (!form.idType) {
+        alert("Please select an ID type.");
+        return;
+    }
+
+    if (!form.idNumber.trim()) {
+        alert("Please enter the ID number.");
+        return;
+    }
+
+    if (!form.idImage) {
+        alert("Please upload a valid ID image.");
+        return;
+    }
+
+    if (uploading) {
+        alert("Please wait for the image upload to finish.");
+        return;
+    }
+
+    onSave(form);
+};
 
     if (!isOpen) return null;
 
@@ -212,9 +248,9 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                 </select>
                             </div>
 
-                            <div>
+                           <div>
                                 <label className={labelCls}>
-                                    ID number
+                                    ID number <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -223,15 +259,16 @@ function CustomerModal({ isOpen, onClose, onSave, customer }) {
                                     onChange={handleChange}
                                     placeholder="Enter ID number"
                                     className={fieldCls}
+                                    required
                                 />
                             </div>
                         </div>
 
                         {/* Upload Area */}
                         <div>
-                            <label className={labelCls}>
-                                Upload valid ID
-                            </label>
+                                <label className={labelCls}>
+                                    Upload valid ID <span className="text-red-500">*</span>
+                                </label>
 
                             {!form.idImage ? (
                                 <div className="relative border-2 border-dashed border-surface-line rounded-card p-6 bg-surface-muted/50 hover:border-brand-500 hover:bg-brand-50/40 transition-colors text-center group cursor-pointer">
